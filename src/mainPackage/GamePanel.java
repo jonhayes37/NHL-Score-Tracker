@@ -49,7 +49,7 @@ public class GamePanel extends JPanel{
 			pnlTeams[i].setLayout(new BorderLayout());
 			pnlTeams[i].setBackground(Color.WHITE);
 			lblTeamIcons[i] = new JLabel();
-			lblTeamIcons[i].setBorder(BorderFactory.createEmptyBorder(5,5,5,10));
+			lblTeamIcons[i].setBorder(BorderFactory.createEmptyBorder(5,5,5,15));
 			
 			pnlNames[i] = new JPanel();
 			pnlNames[i].setLayout(new BorderLayout());

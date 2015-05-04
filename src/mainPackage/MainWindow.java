@@ -177,9 +177,9 @@ public class MainWindow extends JFrame implements MouseListener{
 		
 		// Resizes the window if there are less than 3 games
 		if (numGames > 2){
-			pnlScroll.setPreferredSize(new Dimension(290,325));
+			pnlScroll.setPreferredSize(new Dimension(280,325));
 		}else{
-			pnlScroll.setPreferredSize(new Dimension(290, 10 + numGames * 105));
+			pnlScroll.setPreferredSize(new Dimension(280, 10 + numGames * 105));
 		}
 		
 		// If application is not scraping for the first time, resets the UI panel
