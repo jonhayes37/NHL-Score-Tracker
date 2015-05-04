@@ -7,6 +7,8 @@
 - New Feature: Games in the last 5 minutes of play will now show the game time in bolded, red font
 - Bug Fix: Games which have not started will no longer cause the application to crash on launch
 
+![](http://puu.sh/hBhVp/29c70b4102.png)
+
 ### What is NHL Scraper?
 
 NHL Scraper is a lightweight application that keeps you up to date with the latest hockey scores from around the league. It fetches the latest scores from [Sportsnet](http://www.sportsnet.ca/hockey/nhl/scores/), and displays them in a small, borderless
