@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -24,7 +27,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO Make readme
+// TODO Monitor consistency, in-game data fetching for game time, refreshing
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -88,6 +92,16 @@ public class MainWindow extends JFrame implements MouseListener{
 		
 		pnlMain.add(pnlTop, BorderLayout.NORTH);
 		pnlMain.add(pnlScroll);
+		
+		ScheduledExecutorService refresh = Executors.newSingleThreadScheduledExecutor();
+		refresh.scheduleAtFixedRate(new Runnable(){
+			
+			@Override
+			public void run(){
+				Scrape();
+				UpdateUI(false);
+			}
+		}, 0, 60, TimeUnit.SECONDS);
 		
 		// Starting up the Window
 		this.add(pnlMain);
