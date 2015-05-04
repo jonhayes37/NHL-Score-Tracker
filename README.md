@@ -1,7 +1,7 @@
 # NHL Scraper v1.0.1
 
 #### What's new in v1.0.1:
-* Added automatic score refreshing every 60 seconds, in addition to the manual refresh button.
+- Added automatic score refreshing every 60 seconds, in addition to the manual refresh button.
 
 NHL Scraper is a lightweight application that keeps you up to date with the latest hockey scores from around the league.  
 It fetches the latest scores from [Sportsnet](http://www.sportsnet.ca/hockey/nhl/scores/), and displays them in a small, borderless
