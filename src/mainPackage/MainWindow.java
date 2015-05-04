@@ -1,5 +1,9 @@
 package mainPackage;
-
+/*
+ * The NHL Scraper is a compact, borderless window which
+ * sits at the bottom right of the screen. It regularly scrapes
+ * data from Sportsnet, and updates the UI accordingly.
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,7 +31,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO Make readme
 // TODO Monitor consistency, in-game data fetching for game time, refreshing
 public class MainWindow extends JFrame implements MouseListener{
 
@@ -54,6 +57,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
+	private static final int REFRESH_PERIOD = 60;  // Auto-refresh delay, in seconds
 
 	public MainWindow(){
 		
@@ -86,46 +90,45 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlTop.add(lblClose, BorderLayout.EAST);
 		pnlListGames = new JPanel();
 		
-		// Initial Scraping / Updating
+		// Initial Scraping / Updating main panel
 		Scrape();
 		UpdateUI(true);
 		
-		pnlMain.add(pnlTop, BorderLayout.NORTH);
-		pnlMain.add(pnlScroll);
-		
+		// Scheduling auto-refresh
 		ScheduledExecutorService refresh = Executors.newSingleThreadScheduledExecutor();
 		refresh.scheduleAtFixedRate(new Runnable(){
-			
 			@Override
 			public void run(){
 				Scrape();
 				UpdateUI(false);
 			}
-		}, 0, 60, TimeUnit.SECONDS);
+		}, 0, REFRESH_PERIOD, TimeUnit.SECONDS);
 		
 		// Starting up the Window
+		pnlMain.add(pnlTop, BorderLayout.NORTH);
+		pnlMain.add(pnlScroll);
 		this.add(pnlMain);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(300, 350);
 		this.setIconImage(winIcon.getImage());
 		this.setUndecorated(true);
 		this.pack();
-		this.setLocation(screenSize.width - this.getWidth() - 5, screenSize.height - this.getHeight() - 5);
+		this.setLocation(screenSize.width - this.getWidth() - 3, screenSize.height - this.getHeight() - 3);
 		this.setVisible(true);
 	}
 	
 	// Listener responses for refresh and close
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == lblRefresh){
+		if (e.getSource() == lblRefresh){  // Refresh button
 			Scrape();
 			UpdateUI(false);
-		}else if (e.getSource() == lblClose){
+		}else if (e.getSource() == lblClose){  // Close button
 			this.dispose();
 			System.exit(0);
 		}
 	}
 	
-	// Scrapes www.nhl.com for the day's games and their status
+	// Scrapes www.sportsnet.ca/hockey/nhl/scores/ for the day's games and their status
 	private void Scrape(){
 		try {
 			Document doc = Jsoup.connect(website).get();			
@@ -135,7 +138,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			Elements teamGoals = doc.getElementsByClass("team-score-container");
 			Elements gameTimes = doc.select("td");	
 				
-			// Add info to arrays
+			// Add info to local arrays
 			this.numGames = (short)(teamCities.size() / 2);
 			this.teamNames = new String[numGames][2];
 			this.teamGoals = new int[numGames][2];
@@ -146,13 +149,12 @@ public class MainWindow extends JFrame implements MouseListener{
 				// Team Names and Goals
 				this.teamNames[i][0] = teamCities.get(2 * i).text() + " " + teamName.get(2 * i).text();
 				this.teamNames[i][1] = teamCities.get(2 * i + 1).text() + " " + teamName.get(2 * i + 1).text();
-				this.teamGoals[i][0] = Integer.parseInt(teamGoals.get(2 * i).text());
-				this.teamGoals[i][1] = Integer.parseInt(teamGoals.get(2 * i + 1).text());
+				this.teamGoals[i][0] = (teamGoals.get(2 * i).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
+				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
 				
 				// Game Time
 				this.gameTime[i] = gameTimes.get(i).text();
 			}
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from www.sportsnet.ca. Please ensure you have the latest version of NHL Scraper.");
@@ -161,6 +163,8 @@ public class MainWindow extends JFrame implements MouseListener{
 	
 	// Updates UI elements with the latest scraped data
 	private void UpdateUI(boolean startup){
+		
+		// Creates the new game panels from the given data
 		pnlGames = new GamePanel[numGames];
 		pnlListGames.removeAll();
 		pnlListGames.setLayout(new GridLayout(numGames, 1, 0, 0));
@@ -170,7 +174,15 @@ public class MainWindow extends JFrame implements MouseListener{
 			pnlListGames.add(pnlGames[i]);
 		}
 		pnlScroll = new JScrollPane(pnlListGames, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		pnlScroll.setPreferredSize(new Dimension(275,325));
+		
+		// Resizes the window if there are less than 3 games
+		if (numGames > 2){
+			pnlScroll.setPreferredSize(new Dimension(290,325));
+		}else{
+			pnlScroll.setPreferredSize(new Dimension(290, 10 + numGames * 105));
+		}
+		
+		// If application is not scraping for the first time, resets the UI panel
 		if (!startup) {
 			pnlMain.remove(1);
 			pnlMain.add(pnlScroll);
@@ -190,6 +202,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	public void mousePressed(MouseEvent arg0) {}
 	public void mouseReleased(MouseEvent arg0) {}
 	
+	// Program entry point
 	public static void main(String[] args){
 		new MainWindow();
 	}

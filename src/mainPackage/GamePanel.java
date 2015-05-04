@@ -1,5 +1,11 @@
 package mainPackage;
-
+/*
+ * A GamePanel is a complex UI element which compactly holds
+ * the necessary information for an NHL game, including the
+ * two team's icons, names, goals scored, and the status of 
+ * the game. It can be updated with new scraped information
+ * by calling UpdatePanel();.
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -12,6 +18,7 @@ import javax.swing.JPanel;
 
 public class GamePanel extends JPanel{
 	
+	// UI Elements
 	protected static final long serialVersionUID = -24209034273971017L;
 	protected JPanel pnlGameInfo;
 	protected JPanel[] pnlTeams = new JPanel[2];
@@ -22,16 +29,21 @@ public class GamePanel extends JPanel{
 	protected JLabel[] lblTeamNames = new JLabel[2];
 	protected JLabel[] lblTeamGoals = new JLabel[2];
 	
+	// Miscellaneous Data
+	private static final Font DEFAULT_GAME_INFO_FONT = new Font("Arial", Font.PLAIN, 12);
+	
 	public GamePanel(){
 		
+		// --- UI Creation --- //
 		pnlGameInfo = new JPanel();
 		pnlGameInfo.setLayout(new GridLayout(2,1,0,5));
 		pnlGameInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		pnlGameInfo.setBackground(Color.WHITE);
 		lblPeriod = new JLabel();
-		lblPeriod.setForeground(Color.GRAY);
 		lblPeriod.setBorder(BorderFactory.createEmptyBorder(0,15,0,10));
+		lblPeriod.setFont(DEFAULT_GAME_INFO_FONT);
 		
+		// Individual Team Panels //
 		for (int i = 0; i < 2; i++){
 			pnlTeams[i] = new JPanel();
 			pnlTeams[i].setLayout(new BorderLayout());
@@ -44,15 +56,18 @@ public class GamePanel extends JPanel{
 			pnlNames[i].setBackground(Color.WHITE);
 			lblTeamNames[i] = new JLabel();
 			lblTeamNames[i].setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
+			lblTeamNames[i].setFont(DEFAULT_GAME_INFO_FONT);
 			lblTeamGoals[i] = new JLabel();
+			lblTeamGoals[i].setFont(DEFAULT_GAME_INFO_FONT);
 			pnlNames[i].add(lblTeamNames[i], BorderLayout.WEST);
 			pnlNames[i].add(lblTeamGoals[i], BorderLayout.EAST);
 			
 			pnlTeams[i].add(lblTeamIcons[i], BorderLayout.WEST);
-			pnlTeams[i].add(pnlNames[i]);
+			pnlTeams[i].add(pnlNames[i]);                              
 			pnlGameInfo.add(pnlTeams[i]);
 		}
 		
+		// Window startup
 		this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		this.setLayout(new BorderLayout());
 		this.setBackground(Color.WHITE);
@@ -74,7 +89,12 @@ public class GamePanel extends JPanel{
 				this.lblTeamGoals[i].setFont(new Font(this.lblTeamGoals[i].getFont().getFontName(), Font.BOLD, this.lblTeamGoals[i].getFont().getSize()));
 			}
 		}
-		if (time.equals("FINAL")){
+		
+		if (time.equals("FINAL")){    // If the game is over, grays and bolds 'FINAL'
+			lblPeriod.setForeground(Color.GRAY);
+			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
+		}else if (time.toLowerCase().contains("3rd") && time.length() < 9 && (int)(time.charAt(0)) < 5){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
+			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
 		}
 	}
