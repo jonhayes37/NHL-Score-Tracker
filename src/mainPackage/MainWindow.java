@@ -31,7 +31,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO Monitor consistency, in-game data fetching for game time, refreshing
+
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -42,7 +42,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private JScrollPane pnlScroll;
 	private GamePanel[] pnlGames;
 	private JLabel lblDate;
-	private JLabel lblRefresh;
+	private JLabel lblSettings;
 	private JLabel lblClose;
 
 	// Data from scraping
@@ -53,18 +53,20 @@ public class MainWindow extends JFrame implements MouseListener{
 	
 	// Miscellaneous data
 	private Calendar date = Calendar.getInstance();  // Current date in local timezone
+	private ScraperSettings settings = new ScraperSettings();
 	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
-	private static final int REFRESH_PERIOD = 60;  // Auto-refresh delay, in seconds
 
 	public MainWindow(){
 		
-		// --- UI Creation --- //
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1){e1.printStackTrace();}
+		settings.Load();
+		
+		// --- UI Creation --- //
 		pnlMain = new JPanel();
 		pnlMain.setLayout(new BorderLayout());
 		pnlMain.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -75,17 +77,17 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlTop.setLayout(new BorderLayout());
 		pnlTop.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		pnlTop.setBackground(Color.WHITE);
-		lblRefresh = new JLabel();
-		lblRefresh.setIcon(new ImageIcon("Resources/refresh.png"));
-		lblRefresh.setBorder(BorderFactory.createEmptyBorder(3,3,3,0));
-		lblRefresh.addMouseListener(this);
-		lblDate = new JLabel(FormatDate(date), JLabel.CENTER);
+		lblSettings = new JLabel();
+		lblSettings.setIcon(new ImageIcon("Resources/settings.png"));
+		lblSettings.setBorder(BorderFactory.createEmptyBorder(3,3,3,0));
+		lblSettings.addMouseListener(this);
+		lblDate = new JLabel(FormatDate(), JLabel.CENTER);
 		lblDate.setFont(new Font("Arial", Font.BOLD, 14));
 		lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("Resources/close.png"));
 		lblClose.setBorder(BorderFactory.createEmptyBorder(3,0,3,3));
 		lblClose.addMouseListener(this);
-		pnlTop.add(lblRefresh, BorderLayout.WEST);
+		pnlTop.add(lblSettings, BorderLayout.WEST);
 		pnlTop.add(lblDate);
 		pnlTop.add(lblClose, BorderLayout.EAST);
 		pnlListGames = new JPanel();
@@ -93,35 +95,29 @@ public class MainWindow extends JFrame implements MouseListener{
 		// Initial Scraping / Updating main panel
 		Scrape();
 		UpdateUI(true);
-		
-		// Scheduling auto-refresh
-		ScheduledExecutorService refresh = Executors.newSingleThreadScheduledExecutor();
-		refresh.scheduleAtFixedRate(new Runnable(){
-			@Override
-			public void run(){
-				Scrape();
-				UpdateUI(false);
-			}
-		}, 0, REFRESH_PERIOD, TimeUnit.SECONDS);
+		ScheduleRefresh();
 		
 		// Starting up the Window
 		pnlMain.add(pnlTop, BorderLayout.NORTH);
 		pnlMain.add(pnlScroll);
 		this.add(pnlMain);
+		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(300, 350);
 		this.setIconImage(winIcon.getImage());
 		this.setUndecorated(true);
 		this.pack();
-		this.setLocation(screenSize.width - this.getWidth() - 3, screenSize.height - this.getHeight() - 3);
+		this.setLocation(screenSize.width - this.getWidth() - 2, 2);
 		this.setVisible(true);
 	}
 	
 	// Listener responses for refresh and close
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == lblRefresh){  // Refresh button
-			Scrape();
-			UpdateUI(false);
+		if (e.getSource() == lblSettings){  // Settings button
+			new SettingsWindow(this.getLocation());
+			settings.Load();      // Loads in and applies new settings
+			ScheduleRefresh();
+			this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		}else if (e.getSource() == lblClose){  // Close button
 			this.dispose();
 			System.exit(0);
@@ -150,8 +146,8 @@ public class MainWindow extends JFrame implements MouseListener{
 				this.teamNames[i][0] = teamCities.get(2 * i).text() + " " + teamName.get(2 * i).text();
 				this.teamNames[i][1] = teamCities.get(2 * i + 1).text() + " " + teamName.get(2 * i + 1).text();
 				this.teamGoals[i][0] = (teamGoals.get(2 * i).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
-				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
-				
+				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i + 1).text());
+
 				// Game Time
 				this.gameTime[i] = gameTimes.get(i).text();
 			}
@@ -189,11 +185,33 @@ public class MainWindow extends JFrame implements MouseListener{
 			this.validate();
 			this.repaint();
 		}
+		
+		// Updates date if necessary
+		this.date = Calendar.getInstance();
+		lblDate.setText(FormatDate()); 
+	}
+	
+	// Scheduling auto-refresh
+	private void ScheduleRefresh() {
+		ScheduledExecutorService refresh = Executors.newSingleThreadScheduledExecutor();
+		refresh.scheduleAtFixedRate(new Runnable(){
+			@Override
+			public void run(){
+				Scrape();
+				UpdateUI(false);
+			}
+		}, 0, settings.getRefreshFrequency(), TimeUnit.SECONDS);
 	}
 	
 	// Formats the retrieved Calendar instance into a string for the application
-	private String FormatDate(Calendar date){
-		String strDate = months[date.get(Calendar.MONTH)] + " " + date.get(Calendar.DAY_OF_MONTH) + ", " + date.get(Calendar.YEAR);
+	private String FormatDate(){
+		if (this.date.get(Calendar.HOUR_OF_DAY) < 12 && this.date.get(Calendar.DAY_OF_MONTH) > 1) { 
+			this.date.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH - 1); 
+		}else if (this.date.get(Calendar.HOUR_OF_DAY) < 12) {
+			this.date.set(Calendar.MONTH, Calendar.MONTH - 1);
+			this.date.set(Calendar.DAY_OF_MONTH, date.getActualMaximum(Calendar.DAY_OF_MONTH));
+		}
+		String strDate = months[this.date.get(Calendar.MONTH)] + " " + this.date.get(Calendar.DAY_OF_MONTH) + ", " + this.date.get(Calendar.YEAR);
 		return strDate;
 	}
 	
