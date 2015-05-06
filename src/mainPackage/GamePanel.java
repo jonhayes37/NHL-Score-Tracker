@@ -40,8 +40,8 @@ public class GamePanel extends JPanel{
 		pnlGameInfo.setLayout(new GridLayout(2,1,0,0));
 		pnlGameInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		pnlGameInfo.setBackground(Color.WHITE);
-		lblPeriod = new JLabel();
-		lblPeriod.setBorder(BorderFactory.createEmptyBorder(0,15,0,10));
+		lblPeriod = new JLabel("", JLabel.CENTER);
+		lblPeriod.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 		lblPeriod.setFont(DEFAULT_GAME_INFO_FONT);
 		lblPeriod.setPreferredSize(new Dimension(90,30));
 		
@@ -59,7 +59,7 @@ public class GamePanel extends JPanel{
 			lblTeamNames[i] = new JLabel();
 			lblTeamNames[i].setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
 			lblTeamNames[i].setFont(DEFAULT_GAME_INFO_FONT);
-			lblTeamGoals[i] = new JLabel();
+			lblTeamGoals[i] = new JLabel("", JLabel.CENTER);
 			lblTeamGoals[i].setFont(DEFAULT_GAME_INFO_FONT);
 			pnlNames[i].add(lblTeamNames[i], BorderLayout.WEST);
 			pnlNames[i].add(lblTeamGoals[i], BorderLayout.EAST);
@@ -99,7 +99,7 @@ public class GamePanel extends JPanel{
 
 		if (time.equals("FINAL")){    // If the game is over, grays and bolds 'FINAL'
 			lblPeriod.setForeground(Color.GRAY);
-			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
+			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize() + 1));
 		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
