@@ -103,6 +103,9 @@ public class GamePanel extends JPanel{
 		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
+		}else if (time.contains("PM")) {   // Game has not started yet 
+			lblTeamGoals[0].setText("");
+			lblTeamGoals[1].setText("");
 		}
 	}
 }

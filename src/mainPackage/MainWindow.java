@@ -31,7 +31,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO fix 0-0 bug if not started yet
+
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
