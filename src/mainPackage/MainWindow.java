@@ -1,6 +1,6 @@
 package mainPackage;
 /*
- * The NHL Scraper is a compact, borderless window which
+ * The NHL Score Tracker is a compact, borderless window which
  * sits at the bottom right of the screen. It regularly scrapes
  * data from Sportsnet, and updates the UI accordingly.
  */
@@ -153,7 +153,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from www.sportsnet.ca. Please ensure you have the latest version of NHL Scraper.");
+			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from http://www.sportsnet.ca/hockey/nhl/scores/.\nPlease ensure you have the latest version of NHL Sccore Tracker.");
 		}
 	}
 	
