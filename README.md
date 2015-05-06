@@ -10,6 +10,7 @@
 - Bug fix: Game time will now properly be red and bolded in the final 5 minutes of regulation
 - Bug fix: The winner of a game that has recently ended will now be bolded
 - Bug fix: Games that have not started yet will no longer show the score as 0 - 0
+- Bug fix: Games that ended in overtime or shootout will now be sorted and formatted properly
 
 
 ![](http://puu.sh/hD3MM/fe3f7c6881.png)
