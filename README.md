@@ -1,16 +1,18 @@
-# NHL Score Tracker v1.2
+# NHL Score Tracker v1.2.1
 
-#### What's new in v1.2:
+#### What's new in v1.2.1:
 - Replaced the Refresh button with a Settings button, which opens a Settings dialog beside the tracker
 - The tracker can now be set to stay on top of all windows, and the scraping interval can be adjusted from 15 seconds to 2 hours
 - The tracker will now intelligently sort game cards to keep active games at the top of the list
 - Settings are now serialized to the file "settings.stg"
+- The tracker now flashes a game card yellow when a goal is scored, and fades back to white over two seconds
 - Small UI tweaks
 - Bug fix: Game time will now properly be red and bolded in the final 5 minutes of regulation
 - Bug fix: The winner of a game that has recently ended will now be bolded
+- Bug fix: Games that have not started yet will no longer show the score as 0 - 0
 
 
-![](http://puu.sh/hCX71/a940a6a781.png)
+![](http://puu.sh/hD3j9/7514a36b3f.png)
 
 ### What is NHL Score Tracker?
 
