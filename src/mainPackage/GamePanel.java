@@ -91,15 +91,15 @@ public class GamePanel extends JPanel{
 			this.lblPeriod.setText(time);	
 			
 			// Bolds the winning team and their score, and if the game is over
-			if (((goals[0] > goals[1] && i == 0) || (goals[1] > goals[0] && i == 1)) && time.equals("FINAL")){
+			if (((goals[0] > goals[1] && i == 0) || (goals[1] > goals[0] && i == 1)) && time.contains("FINAL")){
 				this.lblTeamNames[i].setFont(new Font(this.lblTeamNames[i].getFont().getFontName(), Font.BOLD, this.lblTeamNames[i].getFont().getSize()));
 				this.lblTeamGoals[i].setFont(new Font(this.lblTeamGoals[i].getFont().getFontName(), Font.BOLD, this.lblTeamGoals[i].getFont().getSize()));
 			}
 		}
 
-		if (time.equals("FINAL")){    // If the game is over, grays and bolds 'FINAL'
+		if (time.contains("FINAL")){    // If the game is over, grays and bolds 'FINAL'
 			lblPeriod.setForeground(Color.GRAY);
-			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize() + 1));
+			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
 		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));

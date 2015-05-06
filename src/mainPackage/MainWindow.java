@@ -31,7 +31,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO Fix FINAL from equal to contains (like FINAL (OT) )
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -246,7 +246,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		
 		for (int i = 0; i < games.length; i++) {  // Giving each game a priority
 			String[] tempTime = games[i].lblPeriod.getText().split(" ");
-			if (tempTime.length > 1) {
+			if (tempTime.length > 1 && !tempTime[0].contains("FINAL") && !tempTime[1].contains("FINAL")) {
 				if (tempTime[1].equals("1ST")) {    // Game is in the 1st period
 					priorities[i] = 3;
 				}else if (tempTime[1].equals("2ND")) {    // Game is in the 2nd period
@@ -255,7 +255,7 @@ public class MainWindow extends JFrame implements MouseListener{
 					priorities[i] = 5;
 				}else if (tempTime[i].equals("PM")) {    // Game hasn't started yet 
 					priorities[i] = 2;
-				}else{    // It's in OT
+				}else {    // It's in OT (not 'FINAL (OT)')
 					priorities[i] = 6;
 				}
 			}else{   // Period is 'FINAL'
