@@ -12,7 +12,7 @@
 - Bug fix: Games that have not started yet will no longer show the score as 0 - 0
 
 
-![](http://puu.sh/hD3j9/7514a36b3f.png)
+![](http://puu.sh/hD3MM/fe3f7c6881.png)
 
 ### What is NHL Score Tracker?
 
