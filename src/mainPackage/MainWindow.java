@@ -82,7 +82,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		lblSettings.setBorder(BorderFactory.createEmptyBorder(3,3,3,0));
 		lblSettings.addMouseListener(this);
 		lblDate = new JLabel(FormatDate(), JLabel.CENTER);
-		lblDate.setFont(new Font("Arial", Font.BOLD, 14));
+		lblDate.setFont(new Font("Arial", Font.BOLD, 16));
 		lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("Resources/close.png"));
 		lblClose.setBorder(BorderFactory.createEmptyBorder(3,0,3,3));
@@ -103,7 +103,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.add(pnlMain);
 		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(300, 350);
+		this.setSize(325, 350);
 		this.setIconImage(winIcon.getImage());
 		this.setUndecorated(true);
 		this.pack();
@@ -167,6 +167,11 @@ public class MainWindow extends JFrame implements MouseListener{
 		for (int i = 0; i < numGames; i++){
 			pnlGames[i] = new GamePanel();
 			pnlGames[i].UpdatePanel(teamNames[i], teamGoals[i], gameTime[i]);
+		}
+		
+		// Sorting games, and adding them to the UI
+		pnlGames = SortGames(pnlGames);
+		for (int i = 0; i < pnlGames.length; i++) {
 			pnlListGames.add(pnlGames[i]);
 		}
 		pnlScroll = new JScrollPane(pnlListGames, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -213,6 +218,66 @@ public class MainWindow extends JFrame implements MouseListener{
 		}
 		String strDate = months[this.date.get(Calendar.MONTH)] + " " + this.date.get(Calendar.DAY_OF_MONTH) + ", " + this.date.get(Calendar.YEAR);
 		return strDate;
+	}
+	
+	// Sorts games by priority: OT > 3RD > 2ND > 1ST > Not started > FINAL,
+	// then each priority is sorted by time remaining in the period (except for teh final two
+	private GamePanel[] SortGames(GamePanel[] games) {
+		GamePanel[] sortedGames = new GamePanel[games.length];
+		int[] priorities = new int[games.length];
+		
+		for (int i = 0; i < games.length; i++) {  // Giving each game a priority
+			String[] tempTime = games[i].lblPeriod.getText().split(" ");
+			if (tempTime.length > 1) {
+				if (tempTime[1].equals("1ST")) {    // Game is in the 1st period
+					priorities[i] = 3;
+				}else if (tempTime[1].equals("2ND")) {    // Game is in the 2nd period
+					priorities[i] = 4;
+				}else if (tempTime[1].equals("3RD")) {    // Game is in the 3rd period
+					priorities[i] = 5;
+				}else if (tempTime[i].equals("PM")) {    // Game hasn't started yet 
+					priorities[i] = 2;
+				}else{    // It's in OT
+					priorities[i] = 6;
+				}
+			}else{   // Period is 'FINAL'
+				priorities[i] = 1;
+			}
+		}
+		
+		// Sorts the games by priority, and adjusts priority indices as required
+		int curIndex = 0;
+		int[] newPriorities = new int[games.length];
+		for (int i = 6; i > 0; i--) {
+			for (int j = 0; j < games.length; j++) {
+				if (priorities[j] == i) {
+					sortedGames[curIndex] = games[j];
+					newPriorities[curIndex] = priorities[j];
+					curIndex++;
+				}
+			}
+		}
+		
+		// Sorts the games by time remaining in the period
+		boolean notSorted = true;
+		while (notSorted) {  
+			notSorted = false;
+			for (int i = 0; i < sortedGames.length; i++) {
+				if (i + 1 < sortedGames.length && newPriorities[i] == newPriorities[i + 1] && newPriorities[i + 1] > 2) {
+					String[] time1Nums = sortedGames[i].lblPeriod.getText().split(" ")[0].split(":");
+					String[] time2Nums = sortedGames[i + 1].lblPeriod.getText().split(" ")[0].split(":");
+					double time1 = Integer.parseInt(time1Nums[0]) + Integer.parseInt(time1Nums[1]) / 60.0;
+					double time2 = Integer.parseInt(time2Nums[0]) + Integer.parseInt(time2Nums[1]) / 60.0;
+					if (time2 < time1) {  // Need to swap times
+						notSorted = true;
+						GamePanel tempGame = sortedGames[i];
+						sortedGames[i] = sortedGames[i + 1];
+						sortedGames[i + 1] = tempGame;
+					}
+				}
+			}
+		}
+		return sortedGames;
 	}
 	
 	public void mouseEntered(MouseEvent arg0) {}

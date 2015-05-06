@@ -1,5 +1,8 @@
 package mainPackage;
-
+/*
+ * The ScraperSettings class encapsulates the program's settings, 
+ * and handles serialization to the file settings.stg
+ */
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +26,7 @@ public class ScraperSettings implements Serializable{
 		refreshFrequency = frequency;
 	}
 	
+	// Saves current settings to file
 	public void Save(){
 		try{
 	         FileOutputStream fileOut = new FileOutputStream("Resources/settings.stg");
@@ -33,6 +37,7 @@ public class ScraperSettings implements Serializable{
 	      }catch(IOException i){ i.printStackTrace(); }
 	}
 	
+	// Loads file settings into the class 
 	public void Load(){
 		ScraperSettings newSettings;
 		try{

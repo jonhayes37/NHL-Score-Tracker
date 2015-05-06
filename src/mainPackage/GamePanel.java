@@ -8,6 +8,7 @@ package mainPackage;
  */
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -36,12 +37,13 @@ public class GamePanel extends JPanel{
 		
 		// --- UI Creation --- //
 		pnlGameInfo = new JPanel();
-		pnlGameInfo.setLayout(new GridLayout(2,1,0,5));
+		pnlGameInfo.setLayout(new GridLayout(2,1,0,0));
 		pnlGameInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		pnlGameInfo.setBackground(Color.WHITE);
 		lblPeriod = new JLabel();
 		lblPeriod.setBorder(BorderFactory.createEmptyBorder(0,15,0,10));
 		lblPeriod.setFont(DEFAULT_GAME_INFO_FONT);
+		lblPeriod.setPreferredSize(new Dimension(90,30));
 		
 		// Individual Team Panels //
 		for (int i = 0; i < 2; i++){
@@ -86,7 +88,7 @@ public class GamePanel extends JPanel{
 			this.lblTeamIcons[i].setIcon(new ImageIcon("Resources/" + names[i] + ".png"));
 			this.lblTeamNames[i].setText(names[i]);
 			this.lblTeamGoals[i].setText(goals[i] + "");
-			this.lblPeriod.setText(time);
+			this.lblPeriod.setText(time);	
 			
 			// Bolds the winning team and their score, and if the game is over
 			if (((goals[0] > goals[1] && i == 0) || (goals[1] > goals[0] && i == 1)) && time.equals("FINAL")){

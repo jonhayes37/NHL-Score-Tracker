@@ -1,5 +1,8 @@
 package mainPackage;
-
+/*
+ * The SettingsWindow class is a dialog window in which
+ * the user can edit settings for the scraper.
+ */
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -19,6 +22,7 @@ import javax.swing.JPanel;
 
 public class SettingsWindow extends JDialog implements MouseListener{
 	
+	// UI Elements
 	private static final long serialVersionUID = -145581092843805827L;
 	private JPanel pnlMain;
 	private JPanel pnlCentre;
@@ -29,6 +33,8 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JLabel lblSave;
 	private JLabel lblRefresh;
 	private JComboBox<String> cmbTimes;
+	
+	// Miscellaneous Data
 	private static final String[] timeNames = {"15 seconds", "30 seconds", "1 minute", "5 minutes", "15 minutes", "30 minutes", "1 hour", "2 hours"};
 	private static final int[] times = {15, 30, 60, 300, 900, 1800, 3600, 7200};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
@@ -38,6 +44,8 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		
 		ScraperSettings settings = new ScraperSettings();
 		settings.Load();
+		
+		// --- UI Creation --- //
 		pnlMain = new JPanel();
 		pnlMain.setLayout(new BorderLayout());
 		pnlMain.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -66,7 +74,6 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		cmbTimes.setFont(DEFAULT_FONT);
 		pnlRefresh.add(lblRefresh);
 		pnlRefresh.add(cmbTimes);
-		
 		
 		pnlButton = new JPanel();
 		pnlButton.setLayout(new GridLayout(1,2,5,0));
@@ -103,6 +110,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		this.setVisible(true);
 	}
 
+	// Listeners for Cancel / Save
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == lblSave) {
 			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), times[cmbTimes.getSelectedIndex()]);
@@ -113,6 +121,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		}
 	}
 	
+	// Finds the index of accepted refresh times in the times array
 	private int FindRefreshIndex(int seconds) {
 		for (int i = 0; i < times.length; i++) {
 			if (times[i] == seconds) {
