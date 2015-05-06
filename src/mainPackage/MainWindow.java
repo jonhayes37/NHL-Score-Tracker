@@ -31,7 +31,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO fix 0-0 bug if not started yet
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -93,8 +93,8 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlListGames = new JPanel();
 		
 		// Initial Scraping / Updating main panel
-		Scrape();
-		UpdateUI(true);
+		boolean[] changed = Scrape(true);
+		UpdateUI(true, changed);
 		ScheduleRefresh();
 		
 		// Starting up the Window
@@ -125,7 +125,8 @@ public class MainWindow extends JFrame implements MouseListener{
 	}
 	
 	// Scrapes www.sportsnet.ca/hockey/nhl/scores/ for the day's games and their status
-	private void Scrape(){
+	private boolean[] Scrape(boolean startup){
+		boolean[] scoreChanged = null;
 		try {
 			Document doc = Jsoup.connect(website).get();			
 			// Navigates to proper container
@@ -135,10 +136,12 @@ public class MainWindow extends JFrame implements MouseListener{
 			Elements gameTimes = doc.select("td");	
 				
 			// Add info to local arrays
+			int[][] oldGoals = this.teamGoals;
 			this.numGames = (short)(teamCities.size() / 2);
 			this.teamNames = new String[numGames][2];
 			this.teamGoals = new int[numGames][2];
 			this.gameTime = new String[numGames];
+			scoreChanged = new boolean[numGames];
 			
 			for (int i = 0; i < numGames; i++){
 							
@@ -150,15 +153,23 @@ public class MainWindow extends JFrame implements MouseListener{
 
 				// Game Time
 				this.gameTime[i] = gameTimes.get(i).text();
+				
+				// Tracks if a goal was scored
+				if (!startup && (this.teamGoals[i][0] != oldGoals[i][0] || this.teamGoals[i][1] != oldGoals[i][1])) {
+					scoreChanged[i] = true;
+				}else{
+					scoreChanged[i] = false;
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from http://www.sportsnet.ca/hockey/nhl/scores/.\nPlease ensure you have the latest version of NHL Sccore Tracker.");
 		}
+		return scoreChanged;
 	}
 	
 	// Updates UI elements with the latest scraped data
-	private void UpdateUI(boolean startup){
+	private void UpdateUI(boolean startup, boolean[] goalScored){
 		
 		// Creates the new game panels from the given data
 		pnlGames = new GamePanel[numGames];
@@ -189,6 +200,13 @@ public class MainWindow extends JFrame implements MouseListener{
 			pnlMain.add(pnlScroll);
 			this.validate();
 			this.repaint();
+			
+			// Flashes games if a goal was scored
+			for (int i = 0; i < numGames; i++) {
+				if (goalScored[i]) {
+					FlashPanel(pnlGames[i]);
+				}
+			}
 		}
 		
 		// Updates date if necessary
@@ -202,8 +220,8 @@ public class MainWindow extends JFrame implements MouseListener{
 		refresh.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run(){
-				Scrape();
-				UpdateUI(false);
+				boolean[] changed = Scrape(false);
+				UpdateUI(false, changed);
 			}
 		}, 0, settings.getRefreshFrequency(), TimeUnit.SECONDS);
 	}
@@ -278,6 +296,34 @@ public class MainWindow extends JFrame implements MouseListener{
 			}
 		}
 		return sortedGames;
+	}
+
+	// Flashes and fades a game card to show a change in score
+	private void FlashPanel(GamePanel game) {
+		Color tempColor = new Color(240,220,130);  // Initial flash colour
+		for (int i = 1; i <= 2625; i++) {
+			if (i % 21 == 0) { 
+				tempColor = new Color(tempColor.getRed(), tempColor.getGreen(), tempColor.getBlue() + 1);
+			}
+			if (i % 75 == 0) {
+				tempColor = new Color(tempColor.getRed(), tempColor.getGreen() + 1, tempColor.getBlue());
+			}
+			if (i % 175 == 0) { 
+				tempColor = new Color(tempColor.getRed() + 1, tempColor.getGreen(), tempColor.getBlue());
+			}
+			game.setBackground(tempColor);
+			game.lblPeriod.setBackground(tempColor);
+			game.pnlGameInfo.setBackground(tempColor);
+			game.pnlNames[0].setBackground(tempColor);
+			game.pnlNames[1].setBackground(tempColor);
+			game.pnlTeams[0].setBackground(tempColor);
+			game.pnlTeams[1].setBackground(tempColor);
+			this.validate();
+			this.repaint();
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) { e.printStackTrace(); }
+		}
 	}
 	
 	public void mouseEntered(MouseEvent arg0) {}
