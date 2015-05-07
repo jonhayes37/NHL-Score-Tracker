@@ -31,7 +31,7 @@ public class GamePanel extends JPanel{
 	protected JLabel[] lblTeamGoals = new JLabel[2];
 	
 	// Miscellaneous Data
-	private static final Font DEFAULT_GAME_INFO_FONT = new Font("Arial", Font.PLAIN, 12);
+	private static final Font DEFAULT_GAME_INFO_FONT = new Font("Arial", Font.PLAIN, 13);
 	
 	public GamePanel(){
 		

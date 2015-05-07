@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
@@ -31,7 +32,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO Fix FINAL from equal to contains (like FINAL (OT) )
+
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -54,6 +55,8 @@ public class MainWindow extends JFrame implements MouseListener{
 	// Miscellaneous data
 	private Calendar date = Calendar.getInstance();  // Current date in local timezone
 	private ScraperSettings settings = new ScraperSettings();
+	private ScheduledExecutorService refresh;
+	ScheduledFuture<?> scheduledFuture = null;
 	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -81,7 +84,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		lblSettings.setIcon(new ImageIcon("Resources/settings.png"));
 		lblSettings.setBorder(BorderFactory.createEmptyBorder(3,3,3,0));
 		lblSettings.addMouseListener(this);
-		lblDate = new JLabel(FormatDate(), JLabel.CENTER);
+		lblDate = new JLabel("", JLabel.CENTER);
 		lblDate.setFont(new Font("Arial", Font.BOLD, 16));
 		lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("Resources/close.png"));
@@ -216,8 +219,11 @@ public class MainWindow extends JFrame implements MouseListener{
 	
 	// Scheduling auto-refresh
 	private void ScheduleRefresh() {
-		ScheduledExecutorService refresh = Executors.newSingleThreadScheduledExecutor();
-		refresh.scheduleAtFixedRate(new Runnable(){
+		if (scheduledFuture != null) {
+			scheduledFuture.cancel(false);
+		}
+		refresh = Executors.newSingleThreadScheduledExecutor();
+		scheduledFuture = refresh.scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run(){
 				boolean[] changed = Scrape(false);
@@ -228,9 +234,9 @@ public class MainWindow extends JFrame implements MouseListener{
 	
 	// Formats the retrieved Calendar instance into a string for the application
 	private String FormatDate(){
-		if (this.date.get(Calendar.HOUR_OF_DAY) < 12 && this.date.get(Calendar.DAY_OF_MONTH) > 1) { 
-			this.date.set(Calendar.DAY_OF_MONTH, Calendar.DAY_OF_MONTH - 1); 
-		}else if (this.date.get(Calendar.HOUR_OF_DAY) < 12) {
+		if (this.date.get(Calendar.HOUR_OF_DAY) < 12 && this.date.get(Calendar.DAY_OF_MONTH) > 1) {  // Need to go back a day (it's before noon)
+			this.date.set(Calendar.DAY_OF_MONTH, this.date.get(Calendar.DAY_OF_MONTH) - 1); 
+		}else if (this.date.get(Calendar.HOUR_OF_DAY) < 12) {   // Need to change month when going back a day (e.g. May 1 -> April 30)
 			this.date.set(Calendar.MONTH, Calendar.MONTH - 1);
 			this.date.set(Calendar.DAY_OF_MONTH, date.getActualMaximum(Calendar.DAY_OF_MONTH));
 		}
@@ -284,8 +290,8 @@ public class MainWindow extends JFrame implements MouseListener{
 				if (i + 1 < sortedGames.length && newPriorities[i] == newPriorities[i + 1] && newPriorities[i + 1] > 2) {
 					String[] time1Nums = sortedGames[i].lblPeriod.getText().split(" ")[0].split(":");
 					String[] time2Nums = sortedGames[i + 1].lblPeriod.getText().split(" ")[0].split(":");
-					double time1 = Integer.parseInt(time1Nums[0]) + Integer.parseInt(time1Nums[1]) / 60.0;
-					double time2 = Integer.parseInt(time2Nums[0]) + Integer.parseInt(time2Nums[1]) / 60.0;
+					double time1 = (time1Nums[0].contains("End")) ? 0 : (Integer.parseInt(time1Nums[0]) + Integer.parseInt(time1Nums[1]) / 60.0);  // If time is "End 1ST", treat as if time left is 0:00
+					double time2 = (time2Nums[0].contains("End")) ? 0 : (Integer.parseInt(time2Nums[0]) + Integer.parseInt(time2Nums[1]) / 60.0);
 					if (time2 < time1) {  // Need to swap times
 						notSorted = true;
 						GamePanel tempGame = sortedGames[i];
