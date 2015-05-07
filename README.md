@@ -11,7 +11,8 @@
 - Bug fix: The winner of a game that has recently ended will now be bolded
 - Bug fix: Games that have not started yet will no longer show the score as 0 - 0
 - Bug fix: Games that ended in overtime or shootout will now be sorted and formatted properly
-
+- Bug fix: Changing the refresh frequency now correctly replaces the old frequency
+- Bug fix: The date shown in the header of the UI now better reflects the date the games shown were played
 
 ![](http://puu.sh/hD3MM/fe3f7c6881.png)
 
