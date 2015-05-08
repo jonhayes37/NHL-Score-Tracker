@@ -50,7 +50,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		pnlMain.setLayout(new BorderLayout());
 		pnlMain.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 		pnlMain.setBackground(Color.WHITE);
-		chkOnTop = new JCheckBox("Scraper is always on top");
+		chkOnTop = new JCheckBox("Tracker is always on top");
 		chkOnTop.setSelected(settings.getOnTop());
 		chkOnTop.setBackground(Color.WHITE);
 		chkOnTop.setFont(DEFAULT_FONT);

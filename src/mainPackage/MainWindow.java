@@ -132,7 +132,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		boolean[] scoreChanged = null;
 		try {
 			Document doc = Jsoup.connect(website).get();			
-			// Navigates to proper container
+			// Navigates to proper container for each piece of data
 			Elements teamCities = doc.getElementsByClass("scores-team-city");
 			Elements teamName = doc.getElementsByClass("scores-team-name");
 			Elements teamGoals = doc.getElementsByClass("team-score-container");
