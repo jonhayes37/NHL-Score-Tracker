@@ -155,7 +155,7 @@ public class MainWindow extends JFrame implements MouseListener{
 				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i + 1).text());
 
 				// Game Time
-				this.gameTime[i] = gameTimes.get(i).text();
+				this.gameTime[i] = gameTimes.get(i).text().toUpperCase();
 				
 				// Tracks if a goal was scored
 				if (!startup && (this.teamGoals[i][0] != oldGoals[i][0] || this.teamGoals[i][1] != oldGoals[i][1])) {
@@ -290,8 +290,8 @@ public class MainWindow extends JFrame implements MouseListener{
 				if (i + 1 < sortedGames.length && newPriorities[i] == newPriorities[i + 1] && newPriorities[i + 1] > 2) {
 					String[] time1Nums = sortedGames[i].lblPeriod.getText().split(" ")[0].split(":");
 					String[] time2Nums = sortedGames[i + 1].lblPeriod.getText().split(" ")[0].split(":");
-					double time1 = (time1Nums[0].contains("End")) ? 0 : (Integer.parseInt(time1Nums[0]) + Integer.parseInt(time1Nums[1]) / 60.0);  // If time is "End 1ST", treat as if time left is 0:00
-					double time2 = (time2Nums[0].contains("End")) ? 0 : (Integer.parseInt(time2Nums[0]) + Integer.parseInt(time2Nums[1]) / 60.0);
+					double time1 = (time1Nums[0].contains("END")) ? 0 : (Integer.parseInt(time1Nums[0]) + Integer.parseInt(time1Nums[1]) / 60.0);  // If time is "End 1ST", treat as if time left is 0:00
+					double time2 = (time2Nums[0].contains("END")) ? 0 : (Integer.parseInt(time2Nums[0]) + Integer.parseInt(time2Nums[1]) / 60.0);
 					if (time2 < time1) {  // Need to swap times
 						notSorted = true;
 						GamePanel tempGame = sortedGames[i];

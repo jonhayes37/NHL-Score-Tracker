@@ -80,7 +80,7 @@ public class GamePanel extends JPanel{
 	// Updates a panel with scraped information
 	protected void UpdatePanel(String[] names, int[] goals, String time){
 		
-		if (time.equals("End 3RD") && goals[0] != goals[1]) {
+		if (time.equals("END 3RD") && goals[0] != goals[1]) {
 			time = "FINAL";
 		}
 		
