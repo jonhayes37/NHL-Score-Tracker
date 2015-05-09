@@ -7,12 +7,12 @@
 - Settings are now serialized to the file "settings.stg"
 - The tracker now flashes a game card yellow when a goal is scored, and fades back to white over two seconds
 - Small UI tweaks
-- Bug fix: Game time will now properly be red and bolded in the final 5 minutes of regulation
-- Bug fix: The winner of a game that has recently ended will now be bolded
-- Bug fix: Games that have not started yet will no longer show the score as 0 - 0
-- Bug fix: Games that ended in overtime or shootout will now be sorted and formatted properly
-- Bug fix: Changing the refresh frequency now correctly replaces the old frequency
-- Bug fix: The date shown in the header of the UI now better reflects the date the games shown were played
+- **Bug fix:** Game time will now properly be red and bolded in the final 5 minutes of regulation
+- **Bug fix:** The winner of a game that has recently ended will now be bolded
+- **Bug fix:** Games that have not started yet will no longer show the score as 0 - 0
+- **Bug fix:** Games that ended in overtime or shootout will now be sorted and formatted properly
+- **Bug fix:** Changing the refresh frequency now correctly replaces the old frequency
+- **Bug fix:** The date shown in the header of the UI now better reflects the date the games shown were played
 
 ![](http://puu.sh/hD3MM/fe3f7c6881.png)
 
