@@ -1,6 +1,6 @@
-# NHL Score Tracker v1.2
+# NHL Score Tracker 1.2
 
-#### What's new in v1.2:
+#### What's new in 1.2:
 - Replaced the Refresh button with a Settings button, which opens a Settings dialog beside the tracker
 - The tracker can now be set to stay on top of all windows, and the scraping interval can be adjusted from 15 seconds to 2 hours
 - The tracker will now intelligently sort game cards to keep active games at the top of the list
