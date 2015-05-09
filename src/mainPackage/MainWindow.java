@@ -166,7 +166,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from http://www.sportsnet.ca/hockey/nhl/scores/.\nPlease ensure you have the latest version of NHL Sccore Tracker.");
+			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from http://www.sportsnet.ca/hockey/nhl/scores/.\nPlease ensure you have a stable internet connection and\nthe latest version of NHL Score Tracker.");
 		}
 		return scoreChanged;
 	}
