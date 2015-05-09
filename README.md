@@ -24,6 +24,6 @@ The interface is split into 'cards' for each game, which contain both team's log
 game (e.g. 12:59 1st, or FINAL). If there are more than 3 games to report, a simple scroll bar appears to easily check all game
 scores. The refresh interval can be adjusted from 15 seconds to 2 hours, and if you never want to miss an update the tracker can be set to stay on top of all windows, no matter what program you're using!
 
-Any donations are always appreciated!
+Donations are always appreciated!
 
 [![PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=3N3QXHX6KJFKG)
