@@ -80,10 +80,11 @@ public class GamePanel extends JPanel{
 	// Updates a panel with scraped information
 	protected void UpdatePanel(String[] names, int[] goals, String time){
 		
-		if (time.equals("END 3RD") && goals[0] != goals[1]) {
+		if (time.equals("END 3RD") && goals[0] != goals[1]) {  // Sets the game to final if a team won but the site says 'END 3RD'
 			time = "FINAL";
 		}
 		
+		// Updating the two team panels
 		for (int i = 0; i < 2; i++){
 			this.lblTeamIcons[i].setIcon(new ImageIcon("Resources/" + names[i] + ".png"));
 			this.lblTeamNames[i].setText(names[i]);
@@ -103,7 +104,7 @@ public class GamePanel extends JPanel{
 		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
-		}else if (time.contains("PM")) {   // Game has not started yet 
+		}else if (time.contains("PM")) {   // Hides the goals if the game has not started yet
 			lblTeamGoals[0].setText("");
 			lblTeamGoals[1].setText("");
 		}

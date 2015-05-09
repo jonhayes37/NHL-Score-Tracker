@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,6 +34,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+// TODO Scrape a more accurate site?
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -57,7 +59,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private final static String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
@@ -114,14 +116,16 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setVisible(true);
 	}
 	
-	// Listener responses for refresh and close
+	// Listener responses for settings and close
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == lblSettings){  // Settings button
+		if (e.getSource() == lblSettings){   // Settings button
 			new SettingsWindow(this.getLocation());
 			settings.Load();      // Loads in and applies new settings
 			ScheduleRefresh();
-			this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
-		}else if (e.getSource() == lblClose){  // Close button
+			UpdateUI(false, new boolean[numGames]);
+			this.setAlwaysOnTop(settings.getOnTop());   // Sets the window to always be on top if setting is checked
+		}else if (e.getSource() == lblClose){   // Close button
+			scheduledFuture.cancel(false);
 			this.dispose();
 			System.exit(0);
 		}
@@ -132,12 +136,13 @@ public class MainWindow extends JFrame implements MouseListener{
 		boolean[] scoreChanged = null;
 		try {
 			Document doc = Jsoup.connect(website).get();			
+			
 			// Navigates to proper container for each piece of data
 			Elements teamCities = doc.getElementsByClass("scores-team-city");
 			Elements teamName = doc.getElementsByClass("scores-team-name");
 			Elements teamGoals = doc.getElementsByClass("team-score-container");
 			Elements gameTimes = doc.select("td");	
-				
+			
 			// Add info to local arrays
 			int[][] oldGoals = this.teamGoals;
 			this.numGames = (short)(teamCities.size() / 2);
@@ -146,16 +151,13 @@ public class MainWindow extends JFrame implements MouseListener{
 			this.gameTime = new String[numGames];
 			scoreChanged = new boolean[numGames];
 			
+			// Adding formatted team names and goals and the game time to internal data arrays
 			for (int i = 0; i < numGames; i++){
-							
-				// Team Names and Goals
 				this.teamNames[i][0] = teamCities.get(2 * i).text() + " " + teamName.get(2 * i).text();
 				this.teamNames[i][1] = teamCities.get(2 * i + 1).text() + " " + teamName.get(2 * i + 1).text();
 				this.teamGoals[i][0] = (teamGoals.get(2 * i).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
 				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i + 1).text());
-
-				// Game Time
-				this.gameTime[i] = gameTimes.get(i).text().toUpperCase();
+				this.gameTime[i] = FormatGameTime(gameTimes.get(i).text().toUpperCase());
 				
 				// Tracks if a goal was scored
 				if (!startup && (this.teamGoals[i][0] != oldGoals[i][0] || this.teamGoals[i][1] != oldGoals[i][1])) {
@@ -164,16 +166,38 @@ public class MainWindow extends JFrame implements MouseListener{
 					scoreChanged[i] = false;
 				}
 			}
-		} catch (IOException e) {
+		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, "Error: Unable to retrieve data from http://www.sportsnet.ca/hockey/nhl/scores/.\nPlease ensure you have a stable internet connection and\nthe latest version of NHL Score Tracker.");
+			JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\"><b>Error:</b>  Unable to retrieve score data. Please ensure you have a stable<br>internet connection and the latest version of NHL Score Tracker.</html>");
+		    JDialog errorDialog = errorPane.createDialog((JFrame)null, "Retrieval Error");
+		    errorDialog.setLocationRelativeTo(null);
+		    errorDialog.setVisible(true);
+			scheduledFuture.cancel(false);
+			this.dispose();
+			System.exit(0);
 		}
 		return scoreChanged;
 	}
 	
+	// Formats a game time string to '20:00 1ST' if the game has actually started but the website hasn't updated yet
+	private String FormatGameTime(String time) {
+		int tempHour, tempMins;
+		if (time.contains("PM")) {
+			tempHour = Integer.parseInt(time.split(" ")[0].split(":")[0]);
+			tempMins = Integer.parseInt(time.split(" ")[0].split(":")[1]);
+			Calendar tempDate = Calendar.getInstance();
+			tempDate.set(Calendar.HOUR_OF_DAY, (tempHour == 12) ? tempHour : (tempHour + 12));
+			tempDate.set(Calendar.MINUTE, tempMins);
+			if (this.date.compareTo(tempDate) > 0) {  // Time is currently after the game time text
+				return "20:00 1st";
+			}
+		}
+		return time;
+	}
+	
 	// Updates UI elements with the latest scraped data
 	private void UpdateUI(boolean startup, boolean[] goalScored){
-		
+
 		// Creates the new game panels from the given data
 		pnlGames = new GamePanel[numGames];
 		pnlListGames.removeAll();
@@ -184,30 +208,36 @@ public class MainWindow extends JFrame implements MouseListener{
 		}
 		
 		// Sorting games, and adding them to the UI
-		pnlGames = SortGames(pnlGames);
+		pnlGames = (pnlGames.length > 1) ? SortGames(pnlGames) : pnlGames;
 		for (int i = 0; i < pnlGames.length; i++) {
 			pnlListGames.add(pnlGames[i]);
 		}
 		pnlScroll = new JScrollPane(pnlListGames, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		pnlScroll.getVerticalScrollBar().setUnitIncrement(98);
 		
-		// Resizes the window if there are less than 3 games
-		if (numGames > 2){
-			pnlScroll.setPreferredSize(new Dimension(300,325));
+		// Resizes the window if there are less games than the minimum required to show
+		if (numGames < settings.getMinGamesShown()){
+			pnlScroll.setPreferredSize(new Dimension(300, numGames * 98));
 		}else{
-			pnlScroll.setPreferredSize(new Dimension(300, 10 + numGames * 105));
+			pnlScroll.setPreferredSize(new Dimension(300, settings.getMinGamesShown() * 98));
 		}
 		
 		// If application is not scraping for the first time, resets the UI panel
 		if (!startup) {
 			pnlMain.remove(1);
 			pnlMain.add(pnlScroll);
+			this.pack();
 			this.validate();
 			this.repaint();
 			
 			// Flashes games if a goal was scored
 			for (int i = 0; i < numGames; i++) {
 				if (goalScored[i]) {
-					FlashPanel(pnlGames[i]);
+					this.toFront();
+					this.repaint();
+					if (settings.getFlash()) {
+						FlashPanel(pnlGames[i]);
+					}
 				}
 			}
 		}
@@ -237,7 +267,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		if (this.date.get(Calendar.HOUR_OF_DAY) < 12 && this.date.get(Calendar.DAY_OF_MONTH) > 1) {  // Need to go back a day (it's before noon)
 			this.date.set(Calendar.DAY_OF_MONTH, this.date.get(Calendar.DAY_OF_MONTH) - 1); 
 		}else if (this.date.get(Calendar.HOUR_OF_DAY) < 12) {   // Need to change month when going back a day (e.g. May 1 -> April 30)
-			this.date.set(Calendar.MONTH, Calendar.MONTH - 1);
+			this.date.set(Calendar.MONTH, this.date.get(Calendar.MONTH) - 1);
 			this.date.set(Calendar.DAY_OF_MONTH, date.getActualMaximum(Calendar.DAY_OF_MONTH));
 		}
 		String strDate = months[this.date.get(Calendar.MONTH)] + " " + this.date.get(Calendar.DAY_OF_MONTH) + ", " + this.date.get(Calendar.YEAR);
@@ -308,6 +338,8 @@ public class MainWindow extends JFrame implements MouseListener{
 	private void FlashPanel(GamePanel game) {
 		Color tempColor = new Color(240,220,130);  // Initial flash colour
 		for (int i = 1; i <= 2625; i++) {
+			
+			// Increments RGB color values at intervals so that they reach Color.WHITE (255,255,255) simultaneously
 			if (i % 21 == 0) { 
 				tempColor = new Color(tempColor.getRed(), tempColor.getGreen(), tempColor.getBlue() + 1);
 			}
@@ -317,6 +349,8 @@ public class MainWindow extends JFrame implements MouseListener{
 			if (i % 175 == 0) { 
 				tempColor = new Color(tempColor.getRed() + 1, tempColor.getGreen(), tempColor.getBlue());
 			}
+			
+			// Sets all game card components to the new colour
 			game.setBackground(tempColor);
 			game.lblPeriod.setBackground(tempColor);
 			game.pnlGameInfo.setBackground(tempColor);
@@ -327,7 +361,11 @@ public class MainWindow extends JFrame implements MouseListener{
 			this.validate();
 			this.repaint();
 			try {
-				Thread.sleep(1);
+				if (i == 1) {
+					Thread.sleep(750);
+				}else{
+					Thread.sleep(1, 250000);
+				}
 			} catch (InterruptedException e) { e.printStackTrace(); }
 		}
 	}

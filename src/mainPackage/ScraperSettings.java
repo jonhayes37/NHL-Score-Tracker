@@ -14,16 +14,22 @@ public class ScraperSettings implements Serializable{
 
 	private static final long serialVersionUID = -6448475325537972944L;
 	private boolean alwaysOnTop;
+	private boolean flash;
 	private int refreshFrequency;
+	private int minGamesShown;
 	
 	public ScraperSettings(){
 		alwaysOnTop = false;
 		refreshFrequency = 60;
+		minGamesShown = 3;
+		flash = true;
 	}
 	
-	public ScraperSettings(boolean onTop, int frequency){
+	public ScraperSettings(boolean onTop, boolean canFlash, int frequency, int minShown){
 		alwaysOnTop = onTop;
+		flash = canFlash;
 		refreshFrequency = frequency;
+		minGamesShown = minShown;
 	}
 	
 	// Saves current settings to file
@@ -47,11 +53,16 @@ public class ScraperSettings implements Serializable{
 	         in.close();
 	         fileIn.close();
 	         this.alwaysOnTop = newSettings.alwaysOnTop;
+	         this.flash = newSettings.flash;
 	         this.refreshFrequency = newSettings.refreshFrequency;
+	         this.minGamesShown = newSettings.minGamesShown;
 	      }catch(IOException | ClassNotFoundException i){ i.printStackTrace(); }
 		newSettings = null;
 	}
 	
+	// Getters
 	public boolean getOnTop(){ return alwaysOnTop; }
 	public int getRefreshFrequency(){ return refreshFrequency; }
+	public int getMinGamesShown(){ return minGamesShown; }
+	public boolean getFlash(){ return flash; }
 }
