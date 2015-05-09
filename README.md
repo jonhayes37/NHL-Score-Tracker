@@ -14,7 +14,7 @@
 - **Bug fix:** The tracker will now show starting status for a game ("20:00 1ST") if the scraped data does not contain info about the game time, but the game has started based on system time
 - **Bug fix:** The correct date will now be shown when viewing scores on the morning of the first day of a month (e.g. Viewing scores on May 1 before 12:00 PM will now correctly show April 30 as the date of the games)
 
-![](http://puu.sh/hD3MM/fe3f7c6881.png)
+![](http://i.imgur.com/y6Ncxq0.png)
 
 ### What is NHL Score Tracker?
 
