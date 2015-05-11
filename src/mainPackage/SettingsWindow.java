@@ -33,6 +33,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JPanel[] pnlCmb = new JPanel[2];
 	private JCheckBox chkOnTop;
 	private JCheckBox chkFlash;
+	private JCheckBox chkIsBorderless;
 	private JLabel lblCancel;
 	private JLabel lblSave;
 	private JLabel lblRefresh;
@@ -60,7 +61,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		
 		// Checkbox Panel //
 		pnlChk = new JPanel();
-		pnlChk.setLayout(new GridLayout(2, 1, 0, 0));
+		pnlChk.setLayout(new GridLayout(3, 1, 0, 0));
 		pnlChk.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
 		pnlChk.setBackground(Color.WHITE);
 		chkOnTop = new JCheckBox("Tracker window is always on top");
@@ -71,8 +72,13 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		chkFlash.setSelected(settings.getFlash());
 		chkFlash.setBackground(Color.WHITE);
 		chkFlash.setFont(DEFAULT_FONT);
+		chkIsBorderless = new JCheckBox("Borderless window");
+		chkIsBorderless.setSelected(settings.getIsBorderless());
+		chkIsBorderless.setBackground(Color.WHITE);
+		chkIsBorderless.setFont(DEFAULT_FONT);
 		pnlChk.add(chkOnTop);
 		pnlChk.add(chkFlash);
+		pnlChk.add(chkIsBorderless);
 		
 		// Central Panels //
 		pnlCentre = new JPanel();
@@ -160,7 +166,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		if (e.getSource() == lblCancel) {   // Cancel
 			this.dispose();
 		}else if (e.getSource() == lblSave) {   // Save
-			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1);
+			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1);
 			newSettings.Save();
 			this.dispose();
 		}

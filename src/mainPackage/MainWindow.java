@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
@@ -33,7 +34,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO If no games, show 1 panel with "No games today"
+// DONE If no games, show 1 panel with "No games today"
+// DONE setting for decorated
+// TODO Update to FX structure from Swing
 // TODO Scrape a more accurate site?
 public class MainWindow extends JFrame implements MouseListener{
 
@@ -59,6 +62,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
+	private static final String VERSION_NUMBER = "1.4";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -106,11 +110,12 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlMain.add(pnlTop, BorderLayout.NORTH);
 		pnlMain.add(pnlScroll);
 		this.add(pnlMain);
+		this.setTitle("NHL Score Tracker v" + VERSION_NUMBER);
 		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(325, 350);
 		this.setIconImage(winIcon.getImage());
-		this.setUndecorated(true);
+		this.setUndecorated(settings.getIsBorderless());
 		this.pack();
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2);
 		this.setVisible(true);
@@ -121,9 +126,9 @@ public class MainWindow extends JFrame implements MouseListener{
 		if (e.getSource() == lblSettings){   // Settings button
 			new SettingsWindow(this.getLocation());
 			settings.Load();      // Loads in and applies new settings
-			ScheduleRefresh();
-			UpdateUI(false, new boolean[numGames]);
-			this.setAlwaysOnTop(settings.getOnTop());   // Sets the window to always be on top if setting is checked
+			scheduledFuture.cancel(false);
+			this.dispose();
+			new MainWindow();  // Restarts with new settings
 		}else if (e.getSource() == lblClose){   // Close button
 			scheduledFuture.cancel(false);
 			this.dispose();
@@ -197,31 +202,43 @@ public class MainWindow extends JFrame implements MouseListener{
 	
 	// Updates UI elements with the latest scraped data
 	private void UpdateUI(boolean startup, boolean[] goalScored){
-
 		// Creates the new game panels from the given data
 		pnlGames = new GamePanel[numGames];
 		pnlListGames.removeAll();
-		pnlListGames.setLayout(new GridLayout(numGames, 1, 0, 0));
-		for (int i = 0; i < numGames; i++){
-			pnlGames[i] = new GamePanel();
-			pnlGames[i].UpdatePanel(teamNames[i], teamGoals[i], gameTime[i]);
+		if (numGames > 0) {
+			pnlListGames.setLayout(new GridLayout(numGames, 1, 0, 0));
+			for (int i = 0; i < numGames; i++){
+				pnlGames[i] = new GamePanel();
+				pnlGames[i].UpdatePanel(teamNames[i], teamGoals[i], gameTime[i]);
+			}
+			
+			// Sorting games, and adding them to the UI
+			pnlGames = (pnlGames.length > 1) ? SortGames(pnlGames) : pnlGames;
+			for (int i = 0; i < pnlGames.length; i++) {
+				pnlListGames.add(pnlGames[i]);
+			}
+			pnlScroll = new JScrollPane(pnlListGames, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			pnlScroll.getVerticalScrollBar().setUnitIncrement(98);
+			
+			// Resizes the window if there are less games than the minimum required to show
+			if (numGames < settings.getMinGamesShown()){
+				pnlScroll.setPreferredSize(new Dimension(300, numGames * 98));
+			}else{
+				pnlScroll.setPreferredSize(new Dimension(300, settings.getMinGamesShown() * 98));
+			}
+		}else{   // No games on today
+			JPanel pnlGame = new JPanel();
+			pnlGame.setLayout(new GridBagLayout());
+			pnlGame.setBackground(Color.WHITE);
+			pnlGame.setPreferredSize(new Dimension(300, 98));
+			JLabel lblNoGames = new JLabel("No games today", JLabel.CENTER);
+			lblNoGames.setForeground(Color.GRAY);
+			lblNoGames.setOpaque(true);
+			lblNoGames.setBackground(Color.WHITE);
+			lblNoGames.setFont(new Font("Arial", Font.BOLD, 16));
+			pnlGame.add(lblNoGames);
+			pnlScroll = new JScrollPane(pnlGame, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}
-		
-		// Sorting games, and adding them to the UI
-		pnlGames = (pnlGames.length > 1) ? SortGames(pnlGames) : pnlGames;
-		for (int i = 0; i < pnlGames.length; i++) {
-			pnlListGames.add(pnlGames[i]);
-		}
-		pnlScroll = new JScrollPane(pnlListGames, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		pnlScroll.getVerticalScrollBar().setUnitIncrement(98);
-		
-		// Resizes the window if there are less games than the minimum required to show
-		if (numGames < settings.getMinGamesShown()){
-			pnlScroll.setPreferredSize(new Dimension(300, numGames * 98));
-		}else{
-			pnlScroll.setPreferredSize(new Dimension(300, settings.getMinGamesShown() * 98));
-		}
-		
 		// If application is not scraping for the first time, resets the UI panel
 		if (!startup) {
 			pnlMain.remove(1);
