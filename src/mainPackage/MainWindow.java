@@ -33,7 +33,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO If no games, show 1 panel with "No games today"
 // TODO Scrape a more accurate site?
 public class MainWindow extends JFrame implements MouseListener{
 
