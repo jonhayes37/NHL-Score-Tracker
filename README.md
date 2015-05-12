@@ -11,6 +11,8 @@
 - Improved the connection error dialog's functionality and clarity
 - Added a setting to toggle showing the flash animation when a goal scored
 - Added a setting to set the window to borderless or bordered
+- Added multiple size icons
+- Improved clarity of the error dialog and included the local copy's version in the message
 - Small UI tweaks / improvements
 - **Bug fix:** All scraping processes now properly close on exit
 - **Bug fix:** The tracker will now show starting status for a game ("20:00 1ST") if the scraped data does not contain info about the game time, but the game has started based on system time
