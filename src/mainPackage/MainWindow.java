@@ -34,9 +34,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// DONE If no games, show 1 panel with "No games today"
-// DONE setting for decorated
-// TODO Update to FX structure from Swing
+
 // TODO Scrape a more accurate site?
 public class MainWindow extends JFrame implements MouseListener{
 
@@ -171,6 +169,7 @@ public class MainWindow extends JFrame implements MouseListener{
 					scoreChanged[i] = false;
 				}
 			}
+			
 		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
 			e.printStackTrace();
 			JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\"><b>Error:</b>  Unable to retrieve score data. Please ensure you have a stable<br>internet connection and the latest version of NHL Score Tracker.</html>");
@@ -231,7 +230,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			pnlGame.setLayout(new GridBagLayout());
 			pnlGame.setBackground(Color.WHITE);
 			pnlGame.setPreferredSize(new Dimension(300, 98));
-			JLabel lblNoGames = new JLabel("No games today", JLabel.CENTER);
+			JLabel lblNoGames = (this.date.get(Calendar.HOUR_OF_DAY) < 12) ? new JLabel("No games yesterday", JLabel.CENTER) : new JLabel("No games today", JLabel.CENTER);
 			lblNoGames.setForeground(Color.GRAY);
 			lblNoGames.setOpaque(true);
 			lblNoGames.setBackground(Color.WHITE);
@@ -239,6 +238,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			pnlGame.add(lblNoGames);
 			pnlScroll = new JScrollPane(pnlGame, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		}
+		
 		// If application is not scraping for the first time, resets the UI panel
 		if (!startup) {
 			pnlMain.remove(1);
