@@ -10,11 +10,14 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -35,7 +38,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-// TODO Scrape a more accurate site?
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -60,11 +62,11 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private static final String VERSION_NUMBER = "1.4";
+	private static final String VERSION_NUMBER = "1.3";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
+	private List<Image> icons = new ArrayList<Image>();
 
 	public MainWindow(){
 		
@@ -72,6 +74,8 @@ public class MainWindow extends JFrame implements MouseListener{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1){e1.printStackTrace();}
 		settings.Load();
+		icons.add(new ImageIcon("Resources/icon-16x16.png").getImage()); 
+		icons.add(new ImageIcon("Resources/icon.png").getImage());
 		
 		// --- UI Creation --- //
 		pnlMain = new JPanel();
@@ -112,7 +116,8 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(325, 350);
-		this.setIconImage(winIcon.getImage());
+		this.setIconImages(icons);
+		//this.setIconImage(winIcon.getImage());
 		this.setUndecorated(settings.getIsBorderless());
 		this.pack();
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2);
@@ -172,7 +177,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			
 		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
 			e.printStackTrace();
-			JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\"><b>Error:</b>  Unable to retrieve score data. Please ensure you have a stable<br>internet connection and the latest version of NHL Score Tracker.</html>");
+			JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\"><b>Error:</b>  Unable to retrieve score data. Please ensure you have a stable internet<br>connection and the latest version of NHL Score Tracker (this is version " + VERSION_NUMBER + ").</html>");
 		    JDialog errorDialog = errorPane.createDialog((JFrame)null, "Retrieval Error");
 		    errorDialog.setLocationRelativeTo(null);
 		    errorDialog.setVisible(true);
