@@ -7,8 +7,10 @@
 - The scrollbar now intelligently scrolls between games when using the mouse wheel or clicking the arrows on the scrollbar
 - Adjusted 'Cancel' and 'Save' button sizes in the settings window
 - The tracker will now jump to the top window or flash in the taskbar when a goal scored and it is not on top
+- If there are no games on a given day, the tracker shows 1 panel with the message "No games today" / "No games yesterday", depending on the time of day
 - Improved the connection error dialog's functionality and clarity
 - Added a setting to toggle showing the flash animation when a goal scored
+- Added a setting to set the window to borderless or bordered
 - Small UI tweaks / improvements
 - **Bug fix:** All scraping processes now properly close on exit
 - **Bug fix:** The tracker will now show starting status for a game ("20:00 1ST") if the scraped data does not contain info about the game time, but the game has started based on system time
