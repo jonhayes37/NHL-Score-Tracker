@@ -117,7 +117,6 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(325, 350);
 		this.setIconImages(icons);
-		//this.setIconImage(winIcon.getImage());
 		this.setUndecorated(settings.getIsBorderless());
 		this.pack();
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2);
