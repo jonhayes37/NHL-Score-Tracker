@@ -8,8 +8,7 @@
 - Adjusted 'Cancel' and 'Save' button sizes in the settings window
 - The tracker will now jump to the top window or flash in the taskbar when a goal scored and it is not on top
 - If there are no games on a given day, the tracker shows 1 panel with the message "No games today" / "No games yesterday", depending on the time of day
-- Improved the connection error dialog's functionality and clarity
-- Added a setting to toggle showing the flash animation when a goal scored
+- Added a setting to toggle showing the flash animation when a goal is scored
 - Added a setting to set the window to borderless or bordered
 - Added multiple size icons
 - Improved clarity of the error dialog and included the local copy's version in the message
