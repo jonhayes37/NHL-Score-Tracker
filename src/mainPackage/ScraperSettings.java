@@ -64,6 +64,11 @@ public class ScraperSettings implements Serializable{
 		newSettings = null;
 	}
 	
+	// Returns true if both settings are equal
+	public boolean isEqual(ScraperSettings s2) {
+		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown;
+	}
+	
 	// Getters
 	public boolean getOnTop(){ return alwaysOnTop; }
 	public boolean getFlash(){ return flash; }

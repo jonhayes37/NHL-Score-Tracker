@@ -47,6 +47,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private static final int[] times = {5, 15, 30, 60, 300, 900, 1800, 3600};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
+	public String result;
 	
 	public SettingsWindow(Point location){
 		
@@ -164,10 +165,12 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	// Listeners for the buttons
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == lblCancel) {   // Cancel
+			result = "Cancel";
 			this.dispose();
 		}else if (e.getSource() == lblSave) {   // Save
 			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1);
 			newSettings.Save();
+			result = "Save";
 			this.dispose();
 		}
 	}

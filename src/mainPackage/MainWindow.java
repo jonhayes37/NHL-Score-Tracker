@@ -58,6 +58,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private String[] gameTime;
 	
 	// Miscellaneous data
+	private static final String osName = System.getProperty("os.name");
 	private Calendar date = Calendar.getInstance();  // Current date in local timezone
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
@@ -67,6 +68,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private List<Image> icons = new ArrayList<Image>();
+	private int uiOffset = (osName.contains("Mac")) ? 15 : 0;
 
 	public MainWindow(){
 		
@@ -119,18 +121,23 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setIconImages(icons);
 		this.setUndecorated(settings.getIsBorderless());
 		this.pack();
-		this.setLocation(screenSize.width - this.getWidth() - 2, 2);
+		this.setLocation(screenSize.width - this.getWidth() - 2, 2 + uiOffset);
 		this.setVisible(true);
 	}
 	
 	// Listener responses for settings and close
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == lblSettings){   // Settings button
-			new SettingsWindow(this.getLocation());
-			settings.Load();      // Loads in and applies new settings
-			scheduledFuture.cancel(false);
-			this.dispose();
-			new MainWindow();  // Restarts with new settings
+			SettingsWindow newSetWindow = new SettingsWindow(this.getLocation());
+			String buttonPushed = newSetWindow.result;
+			ScraperSettings newSet = new ScraperSettings();      // Loads in new settings for comparison
+			newSet.Load();
+			if (buttonPushed.equals("Save") && !newSet.isEqual(settings)) {  // If a change has been made in settings, restarts the tracker 
+				settings.Load();
+				scheduledFuture.cancel(false);
+				this.dispose();
+				new MainWindow();  // Restarts with new settings
+			}
 		}else if (e.getSource() == lblClose){   // Close button
 			scheduledFuture.cancel(false);
 			this.dispose();
