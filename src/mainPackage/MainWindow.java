@@ -37,11 +37,27 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-// TODO Themes / colours
-// Theme would change: team name / score / game time font colour, 
-// game panel UI color, secondary color for title bar / settings window matches game panel, colours for cancel / save in settings
-public class MainWindow extends JFrame implements MouseListener{
 
+/* Theme ideas:
+	- Toronto Maple Leafs
+	- Montreal Canadiens
+	- All other Canadian teams
+	- All teams?
+	- Dark theme
+	- Chromatic / Metallic theme (maybe blue accent)
+	- 
+	
+ * Title Panel -> primaryColor
+ * Game Panel UI and SettingsWindow UI -> secondaryColor
+ * Cancel Button -> tertiaryColor
+ * Save Button -> quarternaryColor
+ * Game Panel Border -> quintiaryColor
+ * Date, Settings text and Team Names -> primaryFontColor
+ * Game Time -> secondaryFontColor				
+
+*/
+public class MainWindow extends JFrame implements MouseListener{
+	
 	// UI Elements
 	private static final long serialVersionUID = -2398924529942399252L;
 	private JPanel pnlMain;
@@ -99,7 +115,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		lblDate = new JLabel("", JLabel.CENTER);
 		lblDate.setFont(new Font("Arial", Font.BOLD, 16));
 		lblDate.setOpaque(true);
-		lblDate.setForeground(settings.getTheme().getPrimaryFontColor());
+		lblDate.setForeground(settings.getTheme().getTertiaryFontColor());
 		lblDate.setBackground(settings.getTheme().getPrimaryColor());
 		lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("Resources/close.png"));

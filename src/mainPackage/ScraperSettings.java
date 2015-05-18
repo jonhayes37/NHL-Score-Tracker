@@ -70,7 +70,7 @@ public class ScraperSettings implements Serializable{
 	
 	// Returns true if both settings are equal
 	public boolean isEqual(ScraperSettings s2) {
-		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown && this.theme.getName() == s2.theme.getName();
+		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown && this.theme.getName().equals(s2.theme.getName());
 	}
 	
 	// Getters

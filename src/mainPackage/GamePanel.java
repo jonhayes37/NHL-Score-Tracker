@@ -83,7 +83,7 @@ public class GamePanel extends JPanel{
 		}
 		
 		// Window startup
-		this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));//usedTheme.getQuintiaryColor()));
+		this.setBorder(BorderFactory.createLineBorder(usedTheme.getQuintiaryColor()));
 		this.setLayout(new BorderLayout());
 		this.setBackground(usedTheme.getSecondaryColor());
 		this.add(pnlGameInfo);

@@ -47,7 +47,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	// Miscellaneous Data
 	private static final String[] gameNames = { "1 game", "2 games", "3 games", "4 games", "5 games", "6 games", "7 games" };
 	private static final String[] timeNames = {"5 seconds", "15 seconds", "30 seconds", "1 minute", "5 minutes", "15 minutes", "30 minutes", "1 hour"};
-	private static final String[] themeNames = {"Default", "Test"};
+	private static final String[] themeNames = {"Material", "Material Dark", "Leafs Nation", "Canadian with an 'e'"};
 	private static final int[] times = {5, 15, 30, 60, 300, 900, 1800, 3600};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
@@ -122,7 +122,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		cmbMinShown.setFont(DEFAULT_FONT);
 		cmbMinShown.setPreferredSize(new Dimension(90, 22));
 		cmbMinShown.setOpaque(true);
-		cmbMinShown.setForeground(usedTheme.getPrimaryFontColor());
+		cmbMinShown.setForeground(usedTheme.getQuarternaryFontColor());
 		pnlCmb[0].add(lblMinShown);
 		pnlCmb[0].add(cmbMinShown, BorderLayout.EAST);
 		
@@ -137,7 +137,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		cmbTimes.setFont(DEFAULT_FONT);
 		cmbTimes.setPreferredSize(new Dimension(90, 22));
 		cmbTimes.setOpaque(true);
-		cmbTimes.setForeground(usedTheme.getPrimaryFontColor());
+		cmbTimes.setForeground(usedTheme.getQuarternaryFontColor());
 		pnlCmb[1].add(lblRefresh);
 		pnlCmb[1].add(cmbTimes, BorderLayout.EAST);
 		
@@ -151,8 +151,8 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		cmbThemes.setBackground(usedTheme.getSecondaryColor());
 		cmbThemes.setFont(DEFAULT_FONT);
 		cmbThemes.setOpaque(true);
-		cmbThemes.setForeground(usedTheme.getPrimaryFontColor());
-		cmbThemes.setPreferredSize(new Dimension(90, 22));
+		cmbThemes.setForeground(usedTheme.getQuarternaryFontColor());
+		cmbThemes.setPreferredSize(new Dimension(130, 22));
 		pnlCmb[2].add(lblTheme);
 		pnlCmb[2].add(cmbThemes, BorderLayout.EAST);
 		pnlRefresh.add(pnlCmb[0]);

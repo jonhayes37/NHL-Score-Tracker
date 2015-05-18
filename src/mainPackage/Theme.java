@@ -6,13 +6,15 @@ package mainPackage;
  * Themes do not change the tracker's functionality.
  * The theme alters the program's look as follows:
  * 
- *  * Title Panel -> primaryColor
+ * Title Panel -> primaryColor
  * Game Panel UI and SettingsWindow UI -> secondaryColor
  * Cancel Button -> tertiaryColor
  * Save Button -> quarternaryColor
  * Game Panel Border -> quintiaryColor
- * Date, Settings text and Team Names -> primaryFontColor
+ * Settings text and Team Names -> primaryFontColor
  * Game Time -> secondaryFontColor
+ * Date -> tertiaryFontColor
+ * ComboBox text -> quarternaryFontColor
  */
 
 import java.awt.Color;
@@ -34,10 +36,12 @@ public class Theme implements Serializable{
 	private Color quintiaryColor;
 	private Color primaryFontColor;
 	private Color secondaryFontColor;
+	private Color tertiaryFontColor;
+	private Color quarternaryFontColor;
 	
 	// Default theme
 	public Theme() {
-		this.name = "Default";
+		this.name = "Material";
 		this.primaryColor = Color.WHITE;
 		this.secondaryColor = Color.WHITE;
 		this.tertiaryColor = Color.LIGHT_GRAY;
@@ -45,6 +49,8 @@ public class Theme implements Serializable{
 		this.quintiaryColor = Color.LIGHT_GRAY;
 		this.primaryFontColor = Color.BLACK;
 		this.secondaryFontColor = Color.GRAY;
+		this.tertiaryFontColor = Color.BLACK;
+		this.quarternaryFontColor = Color.BLACK;
 	}
 	
 	// Load theme by name
@@ -59,10 +65,12 @@ public class Theme implements Serializable{
         this.quintiaryColor = newTheme.quintiaryColor;
         this.primaryFontColor = newTheme.primaryFontColor;
         this.secondaryFontColor = newTheme.secondaryFontColor;
+        this.tertiaryFontColor = newTheme.tertiaryFontColor;
+        this.quarternaryFontColor = newTheme.quarternaryFontColor;
 	}
 	
 	// Custom theme
-	public Theme(String n, Color pC, Color sC, Color tC, Color qC, Color qqC, Color pT, Color sT) {
+	public Theme(String n, Color pC, Color sC, Color tC, Color qC, Color qqC, Color pT, Color sT, Color tT, Color qT) {
 		this.name = n;
 		this.primaryColor = pC;
 		this.secondaryColor = sC;
@@ -71,6 +79,8 @@ public class Theme implements Serializable{
 		this.quintiaryColor = qqC;
 		this.primaryFontColor = pT;
 		this.secondaryFontColor = sT;
+		this.tertiaryFontColor = tT;
+		this.quarternaryFontColor = qT;
 	}
 	
 	// Saves the current theme to file
@@ -101,6 +111,8 @@ public class Theme implements Serializable{
 	         this.quintiaryColor = newTheme.quintiaryColor;
 	         this.primaryFontColor = newTheme.primaryFontColor;
 	         this.secondaryFontColor = newTheme.secondaryFontColor;
+	         this.tertiaryFontColor = newTheme.tertiaryFontColor;
+	         this.quarternaryFontColor = newTheme.quarternaryFontColor;
 	      }catch(IOException | ClassNotFoundException i){ i.printStackTrace(); }
 		newTheme = null;
 	}
@@ -114,4 +126,6 @@ public class Theme implements Serializable{
 	public Color getQuintiaryColor(){ return this.quintiaryColor; }
 	public Color getPrimaryFontColor() { return this.primaryFontColor; }
 	public Color getSecondaryFontColor() { return this.secondaryFontColor; }
+	public Color getTertiaryFontColor() { return this.tertiaryFontColor; }
+	public Color getQuarternaryFontColor() { return this.quarternaryFontColor; }
 }
