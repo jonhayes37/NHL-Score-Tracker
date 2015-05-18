@@ -18,21 +18,24 @@ public class ScraperSettings implements Serializable{
 	private boolean isBorderless;
 	private int refreshFrequency;
 	private int minGamesShown;
+	private Theme theme;
 	
 	public ScraperSettings(){
-		alwaysOnTop = false;
-		flash = true;
-		isBorderless = true;
-		refreshFrequency = 60;
-		minGamesShown = 3;
+		this.alwaysOnTop = false;
+		this.flash = true;
+		this.isBorderless = true;
+		this.refreshFrequency = 60;
+		this.minGamesShown = 3;
+		this.theme = new Theme();
 	}
 	
-	public ScraperSettings(boolean onTop, boolean canFlash, boolean deco, int frequency, int minShown){
-		alwaysOnTop = onTop;
-		flash = canFlash;
-		isBorderless = deco;
-		refreshFrequency = frequency;
-		minGamesShown = minShown;
+	public ScraperSettings(boolean onTop, boolean canFlash, boolean deco, int frequency, int minShown, String th){
+		this.alwaysOnTop = onTop;
+		this.flash = canFlash;
+		this.isBorderless = deco;
+		this.refreshFrequency = frequency;
+		this.minGamesShown = minShown;
+		this.theme = new Theme(th);
 	}
 	
 	// Saves current settings to file
@@ -60,13 +63,14 @@ public class ScraperSettings implements Serializable{
 	         this.isBorderless = newSettings.isBorderless;
 	         this.refreshFrequency = newSettings.refreshFrequency;
 	         this.minGamesShown = newSettings.minGamesShown;
+	         this.theme = newSettings.theme;
 	      }catch(IOException | ClassNotFoundException i){ i.printStackTrace(); }
 		newSettings = null;
 	}
 	
 	// Returns true if both settings are equal
 	public boolean isEqual(ScraperSettings s2) {
-		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown;
+		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown && this.theme.getName() == s2.theme.getName();
 	}
 	
 	// Getters
@@ -75,4 +79,5 @@ public class ScraperSettings implements Serializable{
 	public boolean getIsBorderless(){ return isBorderless; }
 	public int getRefreshFrequency(){ return refreshFrequency; }
 	public int getMinGamesShown(){ return minGamesShown; }
+	public Theme getTheme(){ return this.theme; }
 }

@@ -37,7 +37,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO Themes / colours
+// Theme would change: team name / score / game time font colour, 
+// game panel UI color, secondary color for title bar / settings window matches game panel, colours for cancel / save in settings
 public class MainWindow extends JFrame implements MouseListener{
 
 	// UI Elements
@@ -71,7 +73,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private int uiOffset = (osName.contains("Mac")) ? 15 : 0;
 
 	public MainWindow(){
-		
+
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1){e1.printStackTrace();}
@@ -83,19 +85,22 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlMain = new JPanel();
 		pnlMain.setLayout(new BorderLayout());
 		pnlMain.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		pnlMain.setBackground(Color.WHITE);
+		pnlMain.setBackground(settings.getTheme().getPrimaryColor());
 		
 		// Top Panel //
 		pnlTop = new JPanel();
 		pnlTop.setLayout(new BorderLayout());
 		pnlTop.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		pnlTop.setBackground(Color.WHITE);
+		pnlTop.setBackground(settings.getTheme().getPrimaryColor());
 		lblSettings = new JLabel();
 		lblSettings.setIcon(new ImageIcon("Resources/settings.png"));
 		lblSettings.setBorder(BorderFactory.createEmptyBorder(3,3,3,0));
 		lblSettings.addMouseListener(this);
 		lblDate = new JLabel("", JLabel.CENTER);
 		lblDate.setFont(new Font("Arial", Font.BOLD, 16));
+		lblDate.setOpaque(true);
+		lblDate.setForeground(settings.getTheme().getPrimaryFontColor());
+		lblDate.setBackground(settings.getTheme().getPrimaryColor());
 		lblClose = new JLabel();
 		lblClose.setIcon(new ImageIcon("Resources/close.png"));
 		lblClose.setBorder(BorderFactory.createEmptyBorder(3,0,3,3));
@@ -114,7 +119,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlMain.add(pnlTop, BorderLayout.NORTH);
 		pnlMain.add(pnlScroll);
 		this.add(pnlMain);
-		this.setTitle("NHL Score Tracker v" + VERSION_NUMBER);
+		this.setTitle("NHL Score Tracker " + VERSION_NUMBER);
 		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(325, 350);
@@ -218,7 +223,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		if (numGames > 0) {
 			pnlListGames.setLayout(new GridLayout(numGames, 1, 0, 0));
 			for (int i = 0; i < numGames; i++){
-				pnlGames[i] = new GamePanel();
+				pnlGames[i] = new GamePanel(settings.getTheme());
 				pnlGames[i].UpdatePanel(teamNames[i], teamGoals[i], gameTime[i]);
 			}
 			

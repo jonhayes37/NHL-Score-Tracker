@@ -30,7 +30,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JPanel pnlCentre;
 	private JPanel pnlRefresh;
 	private JPanel pnlButton;
-	private JPanel[] pnlCmb = new JPanel[2];
+	private JPanel[] pnlCmb = new JPanel[3];
 	private JCheckBox chkOnTop;
 	private JCheckBox chkFlash;
 	private JCheckBox chkIsBorderless;
@@ -38,12 +38,16 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JLabel lblSave;
 	private JLabel lblRefresh;
 	private JLabel lblMinShown;
+	private JLabel lblTheme;
 	private JComboBox<String> cmbTimes;
 	private JComboBox<String> cmbMinShown;
+	private JComboBox<String> cmbThemes;
+	private Theme usedTheme = new Theme();
 	
 	// Miscellaneous Data
 	private static final String[] gameNames = { "1 game", "2 games", "3 games", "4 games", "5 games", "6 games", "7 games" };
 	private static final String[] timeNames = {"5 seconds", "15 seconds", "30 seconds", "1 minute", "5 minutes", "15 minutes", "30 minutes", "1 hour"};
+	private static final String[] themeNames = {"Default", "Test"};
 	private static final int[] times = {5, 15, 30, 60, 300, 900, 1800, 3600};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
@@ -53,30 +57,37 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		
 		ScraperSettings settings = new ScraperSettings();
 		settings.Load();
+		this.usedTheme = settings.getTheme();
 		
 		// --- UI Creation --- //
 		pnlMain = new JPanel();
 		pnlMain.setLayout(new BorderLayout());
 		pnlMain.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-		pnlMain.setBackground(Color.WHITE);
+		pnlMain.setBackground(usedTheme.getSecondaryColor());
 		
 		// Checkbox Panel //
 		pnlChk = new JPanel();
 		pnlChk.setLayout(new GridLayout(3, 1, 0, 0));
 		pnlChk.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
-		pnlChk.setBackground(Color.WHITE);
+		pnlChk.setBackground(usedTheme.getSecondaryColor());
 		chkOnTop = new JCheckBox("Tracker window is always on top");
 		chkOnTop.setSelected(settings.getOnTop());
-		chkOnTop.setBackground(Color.WHITE);
+		chkOnTop.setBackground(usedTheme.getSecondaryColor());
 		chkOnTop.setFont(DEFAULT_FONT);
+		chkOnTop.setOpaque(true);
+		chkOnTop.setForeground(usedTheme.getPrimaryFontColor());
 		chkFlash = new JCheckBox("Animate game when a goal is scored");
 		chkFlash.setSelected(settings.getFlash());
-		chkFlash.setBackground(Color.WHITE);
+		chkFlash.setBackground(usedTheme.getSecondaryColor());
 		chkFlash.setFont(DEFAULT_FONT);
+		chkFlash.setOpaque(true);
+		chkFlash.setForeground(usedTheme.getPrimaryFontColor());
 		chkIsBorderless = new JCheckBox("Borderless window");
 		chkIsBorderless.setSelected(settings.getIsBorderless());
-		chkIsBorderless.setBackground(Color.WHITE);
+		chkIsBorderless.setBackground(usedTheme.getSecondaryColor());
 		chkIsBorderless.setFont(DEFAULT_FONT);
+		chkIsBorderless.setOpaque(true);
+		chkIsBorderless.setForeground(usedTheme.getPrimaryFontColor());
 		pnlChk.add(chkOnTop);
 		pnlChk.add(chkFlash);
 		pnlChk.add(chkIsBorderless);
@@ -84,61 +95,85 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		// Central Panels //
 		pnlCentre = new JPanel();
 		pnlCentre.setLayout(new BorderLayout());
-		pnlCentre.setBackground(Color.WHITE);
+		pnlCentre.setBackground(usedTheme.getSecondaryColor());
 		pnlCentre.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		
 		pnlRefresh = new JPanel();
-		pnlRefresh.setLayout(new GridLayout(2,1,0,10));
-		pnlRefresh.setBackground(Color.WHITE);
+		pnlRefresh.setLayout(new GridLayout(3,1,0,10));
+		pnlRefresh.setBackground(usedTheme.getSecondaryColor());
 		pnlRefresh.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
 		
 		// Combobox Panels //
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 3; i++) {
 			pnlCmb[i] = new JPanel();
 			pnlCmb[i].setBackground(Color.WHITE);
 			pnlCmb[i].setLayout(new BorderLayout());
 		}
 		
 		lblMinShown = new JLabel("Minimum # of games shown:");
-		lblMinShown.setBackground(Color.WHITE);
+		lblMinShown.setBackground(usedTheme.getSecondaryColor());
 		lblMinShown.setFont(DEFAULT_FONT);
+		lblMinShown.setOpaque(true);
+		lblMinShown.setForeground(usedTheme.getPrimaryFontColor());
 		lblMinShown.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
 		cmbMinShown = new JComboBox<String>(gameNames);
 		cmbMinShown.setSelectedIndex(settings.getMinGamesShown() - 1);
-		cmbMinShown.setBackground(Color.WHITE);		
+		cmbMinShown.setBackground(usedTheme.getSecondaryColor());		
 		cmbMinShown.setFont(DEFAULT_FONT);
 		cmbMinShown.setPreferredSize(new Dimension(90, 22));
+		cmbMinShown.setOpaque(true);
+		cmbMinShown.setForeground(usedTheme.getPrimaryFontColor());
 		pnlCmb[0].add(lblMinShown);
 		pnlCmb[0].add(cmbMinShown, BorderLayout.EAST);
 		
 		lblRefresh = new JLabel("Refresh every:");
-		lblRefresh.setBackground(Color.WHITE);
+		lblRefresh.setBackground(usedTheme.getSecondaryColor());
 		lblRefresh.setFont(DEFAULT_FONT);
+		lblRefresh.setOpaque(true);
+		lblRefresh.setForeground(usedTheme.getPrimaryFontColor());
 		cmbTimes = new JComboBox<String>(timeNames);
 		cmbTimes.setSelectedIndex(FindRefreshIndex(settings.getRefreshFrequency()));
-		cmbTimes.setBackground(Color.WHITE);
+		cmbTimes.setBackground(usedTheme.getSecondaryColor());
 		cmbTimes.setFont(DEFAULT_FONT);
 		cmbTimes.setPreferredSize(new Dimension(90, 22));
+		cmbTimes.setOpaque(true);
+		cmbTimes.setForeground(usedTheme.getPrimaryFontColor());
 		pnlCmb[1].add(lblRefresh);
 		pnlCmb[1].add(cmbTimes, BorderLayout.EAST);
+		
+		lblTheme = new JLabel("Current Theme:");
+		lblTheme.setBackground(usedTheme.getSecondaryColor());
+		lblTheme.setFont(DEFAULT_FONT);
+		lblTheme.setOpaque(true);
+		lblTheme.setForeground(usedTheme.getPrimaryFontColor());
+		cmbThemes = new JComboBox<String>(themeNames);
+		cmbThemes.setSelectedIndex(FindThemeIndex(this.usedTheme.getName()));
+		cmbThemes.setBackground(usedTheme.getSecondaryColor());
+		cmbThemes.setFont(DEFAULT_FONT);
+		cmbThemes.setOpaque(true);
+		cmbThemes.setForeground(usedTheme.getPrimaryFontColor());
+		cmbThemes.setPreferredSize(new Dimension(90, 22));
+		pnlCmb[2].add(lblTheme);
+		pnlCmb[2].add(cmbThemes, BorderLayout.EAST);
 		pnlRefresh.add(pnlCmb[0]);
 		pnlRefresh.add(pnlCmb[1]);
+		pnlRefresh.add(pnlCmb[2]);
 		
 		// Button Panel //
 		pnlButton = new JPanel();
 		pnlButton.setLayout(new GridLayout(1,2,5,0));
-		pnlButton.setBackground(Color.WHITE);
+		pnlButton.setBackground(usedTheme.getSecondaryColor());
 		pnlButton.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
 		lblCancel = new JLabel("Cancel", JLabel.CENTER);
 		lblCancel.setOpaque(true);
-		lblCancel.setBackground(Color.LIGHT_GRAY);
+		lblCancel.setBackground(usedTheme.getTertiaryColor());
 		lblCancel.setForeground(Color.WHITE);
 		lblCancel.setFont(new Font("Arial", Font.BOLD, 16));
 		lblCancel.addMouseListener(this);
 		lblCancel.setPreferredSize(new Dimension(100,25));
 		lblSave = new JLabel("Save", JLabel.CENTER);
 		lblSave.setOpaque(true);
-		lblSave.setBackground(new Color(62,179,113));
+		lblSave.setBackground(usedTheme.getQuarternaryColor());
 		lblSave.setForeground(Color.WHITE);
 		lblSave.setFont(new Font("Arial", Font.BOLD, 16));
 		lblSave.addMouseListener(this);
@@ -168,17 +203,27 @@ public class SettingsWindow extends JDialog implements MouseListener{
 			result = "Cancel";
 			this.dispose();
 		}else if (e.getSource() == lblSave) {   // Save
-			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1);
+			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1, themeNames[cmbThemes.getSelectedIndex()]);
 			newSettings.Save();
 			result = "Save";
 			this.dispose();
 		}
 	}
 	
-	// Finds the index of accepted refresh times in the times array
+	// Finds the index of the refresh time in the times array
 	private int FindRefreshIndex(int seconds) {
 		for (int i = 0; i < times.length; i++) {
 			if (times[i] == seconds) {
+				return i;
+			}
+		}
+		return 0;
+	}
+	
+	// Finds the index of the theme in the themes array
+	private int FindThemeIndex(String name) {
+		for (int i = 0; i < themeNames.length; i++) {
+			if (themeNames[i].equals(name)) {
 				return i;
 			}
 		}

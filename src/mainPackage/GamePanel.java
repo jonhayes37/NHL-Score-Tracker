@@ -29,38 +29,51 @@ public class GamePanel extends JPanel{
 	protected JLabel[] lblTeamIcons = new JLabel[2];
 	protected JLabel[] lblTeamNames = new JLabel[2];
 	protected JLabel[] lblTeamGoals = new JLabel[2];
+	private Theme usedTheme = new Theme();
 	
 	// Miscellaneous Data
 	private static final Font DEFAULT_GAME_INFO_FONT = new Font("Arial", Font.PLAIN, 13);
 	
-	public GamePanel(){
+	public GamePanel(Theme theme){
+		
+		this.usedTheme = theme;
 		
 		// --- UI Creation --- //
 		pnlGameInfo = new JPanel();
 		pnlGameInfo.setLayout(new GridLayout(2,1,0,0));
 		pnlGameInfo.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		pnlGameInfo.setBackground(Color.WHITE);
+		pnlGameInfo.setBackground(usedTheme.getSecondaryColor());
 		lblPeriod = new JLabel("", JLabel.CENTER);
 		lblPeriod.setBorder(BorderFactory.createEmptyBorder(0,10,0,10));
 		lblPeriod.setFont(DEFAULT_GAME_INFO_FONT);
+		lblPeriod.setOpaque(true);
+		lblPeriod.setForeground(usedTheme.getSecondaryFontColor());
+		lblPeriod.setBackground(usedTheme.getSecondaryColor());
 		lblPeriod.setPreferredSize(new Dimension(90,30));
 		
 		// Individual Team Panels //
 		for (int i = 0; i < 2; i++){
 			pnlTeams[i] = new JPanel();
 			pnlTeams[i].setLayout(new BorderLayout());
-			pnlTeams[i].setBackground(Color.WHITE);
+			pnlTeams[i].setBackground(usedTheme.getSecondaryColor());
 			lblTeamIcons[i] = new JLabel();
 			lblTeamIcons[i].setBorder(BorderFactory.createEmptyBorder(5,5,5,15));
+			lblTeamIcons[i].setBackground(usedTheme.getSecondaryColor());
 			
 			pnlNames[i] = new JPanel();
 			pnlNames[i].setLayout(new BorderLayout());
-			pnlNames[i].setBackground(Color.WHITE);
+			pnlNames[i].setBackground(usedTheme.getSecondaryColor());
 			lblTeamNames[i] = new JLabel();
 			lblTeamNames[i].setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
 			lblTeamNames[i].setFont(DEFAULT_GAME_INFO_FONT);
+			lblTeamNames[i].setOpaque(true);
+			lblTeamNames[i].setForeground(usedTheme.getPrimaryFontColor());
+			lblTeamNames[i].setBackground(usedTheme.getSecondaryColor());
 			lblTeamGoals[i] = new JLabel("", JLabel.CENTER);
 			lblTeamGoals[i].setFont(DEFAULT_GAME_INFO_FONT);
+			lblTeamGoals[i].setOpaque(true);
+			lblTeamGoals[i].setForeground(usedTheme.getPrimaryFontColor());
+			lblTeamGoals[i].setBackground(usedTheme.getSecondaryColor());
 			pnlNames[i].add(lblTeamNames[i], BorderLayout.WEST);
 			pnlNames[i].add(lblTeamGoals[i], BorderLayout.EAST);
 			
@@ -70,9 +83,9 @@ public class GamePanel extends JPanel{
 		}
 		
 		// Window startup
-		this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+		this.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));//usedTheme.getQuintiaryColor()));
 		this.setLayout(new BorderLayout());
-		this.setBackground(Color.WHITE);
+		this.setBackground(usedTheme.getSecondaryColor());
 		this.add(pnlGameInfo);
 		this.add(lblPeriod, BorderLayout.EAST);
 	}
@@ -99,7 +112,7 @@ public class GamePanel extends JPanel{
 		}
 
 		if (time.contains("FINAL")){    // If the game is over, grays and bolds 'FINAL'
-			lblPeriod.setForeground(Color.GRAY);
+			lblPeriod.setForeground(usedTheme.getSecondaryFontColor());
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
 		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
