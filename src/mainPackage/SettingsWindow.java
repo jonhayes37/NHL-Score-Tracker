@@ -9,8 +9,11 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -47,17 +50,26 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	// Miscellaneous Data
 	private static final String[] gameNames = { "1 game", "2 games", "3 games", "4 games", "5 games", "6 games", "7 games" };
 	private static final String[] timeNames = {"5 seconds", "15 seconds", "30 seconds", "1 minute", "5 minutes", "15 minutes", "30 minutes", "1 hour"};
-	private static final String[] themeNames = {"Material", "Material Dark", "Leafs Nation", "Canadian with an 'e'"};
+	private String[] themeNames;
 	private static final int[] times = {5, 15, 30, 60, 300, 900, 1800, 3600};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
 	public String result;
+	final String DIRECTORY = System.getProperty("user.dir") + "\\Themes\\";
+	final File fileInstance = new File(DIRECTORY);
+	final String[] themes = fileInstance.list();
 	
 	public SettingsWindow(Point location){
 		
+		// Loading in settings and the available themes
 		ScraperSettings settings = new ScraperSettings();
 		settings.Load();
 		this.usedTheme = settings.getTheme();
+		themeNames = new String[themes.length + 1];
+		for (int i = 0; i < themes.length; i++) {
+			themeNames[i] = themes[i].substring(0, themes[i].length() - 4);
+		}
+		themeNames[themeNames.length - 1] = "Add custom theme...";
 		
 		// --- UI Creation --- //
 		pnlMain = new JPanel();
@@ -153,6 +165,14 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		cmbThemes.setOpaque(true);
 		cmbThemes.setForeground(usedTheme.getQuarternaryFontColor());
 		cmbThemes.setPreferredSize(new Dimension(130, 22));
+		cmbThemes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+		        if (cmbThemes.getSelectedIndex() == (cmbThemes.getItemCount() - 1)) {
+		        	new ThemeMakerWindow();
+		        	
+		        }
+		    }
+		});
 		pnlCmb[2].add(lblTheme);
 		pnlCmb[2].add(cmbThemes, BorderLayout.EAST);
 		pnlRefresh.add(pnlCmb[0]);
@@ -177,7 +197,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		lblSave.setForeground(Color.WHITE);
 		lblSave.setFont(new Font("Arial", Font.BOLD, 16));
 		lblSave.addMouseListener(this);
-		lblSave.setPreferredSize(new Dimension(100,25));
+		lblSave.setPreferredSize(new Dimension(110,25));
 		pnlButton.add(lblCancel);
 		pnlButton.add(lblSave);
 		

@@ -15,6 +15,12 @@ package mainPackage;
  * Game Time -> secondaryFontColor
  * Date -> tertiaryFontColor
  * ComboBox text -> quarternaryFontColor
+ * 
+ * Preset Themes
+ * Theme material = new Theme();
+ * Theme materialDark = new Theme("Material Dark", Color.BLACK, Color.DARK_GRAY, Color.LIGHT_GRAY, Color.GRAY, Color.LIGHT_GRAY, Color.WHITE, Color.WHITE, Color.WHITE, Color.DARK_GRAY);
+ * Theme leafsNation = new Theme("Leafs Nation", new Color(0,56,118), Color.WHITE, new Color(89,127,169), new Color(0,56,118), Color.LIGHT_GRAY, new Color(0,56,118), Color.GRAY, Color.WHITE, new Color(0,56,118));
+ * Theme iAmCanadien = new Theme("I Am Canadien", new Color(190, 47, 55), Color.WHITE, new Color(190,87,93), new Color(33,56,111), new Color(190,87,93), new Color(33,56,111), Color.GRAY, Color.WHITE, new Color(33,56,111));	
  */
 
 import java.awt.Color;

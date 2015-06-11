@@ -39,23 +39,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 /* Theme ideas:
-	- Toronto Maple Leafs
-	- Montreal Canadiens
-	- All other Canadian teams
+ * TODO Custom theme window? (last option in dropdown is "Add custom theme...")
+	- All other Canadian teams?
 	- All teams?
-	- Dark theme
 	- Chromatic / Metallic theme (maybe blue accent)
-	- 
-	
- * Title Panel -> primaryColor
- * Game Panel UI and SettingsWindow UI -> secondaryColor
- * Cancel Button -> tertiaryColor
- * Save Button -> quarternaryColor
- * Game Panel Border -> quintiaryColor
- * Date, Settings text and Team Names -> primaryFontColor
- * Game Time -> secondaryFontColor				
-
 */
+
 public class MainWindow extends JFrame implements MouseListener{
 	
 	// UI Elements
@@ -89,7 +78,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private int uiOffset = (osName.contains("Mac")) ? 15 : 0;
 
 	public MainWindow(){
-
+		
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1){e1.printStackTrace();}
