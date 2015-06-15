@@ -38,12 +38,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-/* Theme ideas:
- * TODO Custom theme window? (last option in dropdown is "Add custom theme...")
-	- All other Canadian teams?
-	- All teams?
-	- Chromatic / Metallic theme (maybe blue accent)
-*/
 
 public class MainWindow extends JFrame implements MouseListener{
 	

@@ -68,8 +68,8 @@ public class ThemeMakerWindow extends JDialog implements ActionListener{
 		pnlColorFormat = new JPanel();
 		pnlColorFormat.setLayout(new GridLayout(1,2,5,0));
 		pnlColorFormat.setBorder(title);
-		btnRadios[0] = new JRadioButton("RGB ('104,35,79')");
-		btnRadios[1] = new JRadioButton("Hex ('548FCD')");
+		btnRadios[0] = new JRadioButton("RGB (104,35,79)");
+		btnRadios[1] = new JRadioButton("Hex (548FCD)");
 		btnColorFormat = new ButtonGroup();
 		btnColorFormat.add(btnRadios[0]);
 		btnColorFormat.add(btnRadios[1]);
@@ -147,10 +147,11 @@ public class ThemeMakerWindow extends JDialog implements ActionListener{
 			this.dispose();
 		}else if (e.getSource() == btnHelp) {
 			JOptionPane.showMessageDialog(this, "<html><div style=\"text-align: center\">The five panel colours and 4 font colours available to change<br>can be combined"
-					+ " to make any theme you can imagine!<br>The UI background and font colour is changed by each colour as follows:</div><br><br>"
-					+ "Primary Colour: Title Panel in main UI<br>Secondary Colour: Individual Game Panels and Settings Window<br>Tertiary Colour: Cancel Button<br>Quarternary Colour: Save Button<br>"
-					+ "Quintiary Colour: Game Panel Border<br><br>Primary Font Colour: Settings Text and Team Names<br>Secondary Font Colour: Game Time<br>Tertiary Font Colour: Date in Title Panel<br>"
-					+ "Quarternary Font Colour: Dropdown Menu Text in Settings</html>", "Custom Theme Help", JOptionPane.INFORMATION_MESSAGE);
+					+ " to make any theme you can imagine!<br><strong>NOTE: A restart is required before the custom theme can be applied!</strong></div><br><br>"
+					+ "The UI background and font colour is changed by each colour as follows:<br>"
+					+ "<strong>Primary Colour:</strong> Title Panel in main UI<br><strong>Secondary Colour:</strong> Individual Game Panels and Settings Window<br><strong>Tertiary Colour:</strong> Cancel Button<br><strong>Quarternary Colour:</strong> Save Button<br>"
+					+ "<strong>Quintiary Colour:</strong> Game Panel Border<br><br><strong>Primary Font Colour:</strong> Settings Text and Team Names<br><strong>Secondary Font Colour:</strong> Game Time<br><strong>Tertiary Font Colour:</strong> Date in Title Panel<br>"
+					+ "<strong>Quarternary Font Colour:</strong> Dropdown Menu Text in Settings</html>", "Custom Theme Help", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 	
