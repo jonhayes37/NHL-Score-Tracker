@@ -241,14 +241,26 @@ public class MainWindow extends JFrame implements MouseListener{
 				pnlScroll.setPreferredSize(new Dimension(300, settings.getMinGamesShown() * 98));
 			}
 		}else{   // No games on today
+			/*
+			 * Title Panel -> primaryColor
+			 * Game Panel UI and SettingsWindow UI -> secondaryColor
+			 * Cancel Button -> tertiaryColor
+			 * Save Button -> quarternaryColor
+			 * Game Panel Border -> quintiaryColor
+			 * Settings text and Team Names -> primaryFontColor
+			 * Game Time -> secondaryFontColor
+			 * Date -> tertiaryFontColor
+			 * ComboBox text -> quarternaryFontColor
+			 */
+			
 			JPanel pnlGame = new JPanel();
 			pnlGame.setLayout(new GridBagLayout());
-			pnlGame.setBackground(Color.WHITE);
+			pnlGame.setBackground(settings.getTheme().getSecondaryColor());
 			pnlGame.setPreferredSize(new Dimension(300, 98));
 			JLabel lblNoGames = (this.date.get(Calendar.HOUR_OF_DAY) < 12) ? new JLabel("No games yesterday", JLabel.CENTER) : new JLabel("No games today", JLabel.CENTER);
-			lblNoGames.setForeground(Color.GRAY);
+			lblNoGames.setForeground(settings.getTheme().getSecondaryFontColor());
 			lblNoGames.setOpaque(true);
-			lblNoGames.setBackground(Color.WHITE);
+			lblNoGames.setBackground(settings.getTheme().getSecondaryColor());
 			lblNoGames.setFont(new Font("Arial", Font.BOLD, 16));
 			pnlGame.add(lblNoGames);
 			pnlScroll = new JScrollPane(pnlGame, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
