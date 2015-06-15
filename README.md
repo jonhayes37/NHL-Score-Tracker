@@ -1,24 +1,9 @@
-# NHL Score Tracker 1.3
+# NHL Score Tracker 1.4
 
-#### What's new in 1.3:
-- The tracker's refresh frequency can now be adjusted from 5 seconds to 1 hour
-- Adjusted the flashing animation to make new goals scored more obvious
-- Added a setting which allows you to choose how many games to show before adding a scrollbar
-- The scrollbar now intelligently scrolls between games when using the mouse wheel or clicking the arrows on the scrollbar
-- Adjusted 'Cancel' and 'Save' button sizes in the settings window
-- The tracker will now jump to the top window or flash in the taskbar when a goal scored and it is not on top
-- If there are no games on a given day, the tracker shows 1 panel with the message "No games today" / "No games yesterday", depending on the time of day
-- The main UI now only restarts when settings are changed and saved in the settings window
-- Added a setting to toggle showing the flash animation when a goal is scored
-- Added a setting to set the window to borderless or bordered
-- Added multiple size icons
-- Improved clarity of the error dialog and included the local copy's version in the message
-- Small UI tweaks / improvements
-- **Bug fix:** All scraping processes now properly close on exit
-- **Bug fix:** The tracker will now show starting status for a game ("20:00 1ST") if the scraped data does not contain info about the game time, but the game has started based on system time
-- **Bug fix:** The correct date will now be shown when viewing scores on the morning of the first day of a month (e.g. Viewing scores on May 1 before 12:00 PM will now correctly show April 30 as the date of the games)
-- **Bug fix:** The borderless window option now properly displays on Mac OS X
-
+#### What's new in 1.4:
+- Themes which change the look of various parts of the program are now implemented
+- Four pre-defined themes have been added, as well as the ability to make your own!
+- Each theme has 9 points of customization
 
 ![](http://i.imgur.com/y6Ncxq0.png)
 
