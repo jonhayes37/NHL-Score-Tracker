@@ -54,9 +54,7 @@ public class Updater {
 			br.close();
 		} catch (IOException e) { e.printStackTrace(); }
 		System.out.println("Remote Version: " + remoteVersion);
-		if (remoteVersion.equals(localVersion)){
-			JOptionPane.showMessageDialog(null, "No updates available.", projectName + " Updater", JOptionPane.INFORMATION_MESSAGE);
-		}else{
+		if (!remoteVersion.equals(localVersion)){
 			int choice = JOptionPane.showConfirmDialog(null, "<html>An update to " + projectName + " is available.<br><br>Your version: " + localVersion + "<br>Latest version: " + remoteVersion + "<br><br>Would you like to download the latest version?", projectName + " Updater", JOptionPane.YES_NO_OPTION);
 			if (choice == JOptionPane.YES_OPTION){
 				DownloadLatestVersion();
