@@ -37,6 +37,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JCheckBox chkOnTop;
 	private JCheckBox chkFlash;
 	private JCheckBox chkIsBorderless;
+	private JCheckBox chkAutoUpdate;
 	private JLabel lblCancel;
 	private JLabel lblSave;
 	private JLabel lblRefresh;
@@ -79,7 +80,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		
 		// Checkbox Panel //
 		pnlChk = new JPanel();
-		pnlChk.setLayout(new GridLayout(3, 1, 0, 0));
+		pnlChk.setLayout(new GridLayout(4, 1, 0, 0));
 		pnlChk.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
 		pnlChk.setBackground(usedTheme.getSecondaryColor());
 		chkOnTop = new JCheckBox("Tracker window is always on top");
@@ -100,9 +101,16 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		chkIsBorderless.setFont(DEFAULT_FONT);
 		chkIsBorderless.setOpaque(true);
 		chkIsBorderless.setForeground(usedTheme.getPrimaryFontColor());
+		chkAutoUpdate = new JCheckBox("Automatically check for updates");
+		chkAutoUpdate.setSelected(settings.getAutoUpdate());
+		chkAutoUpdate.setBackground(usedTheme.getSecondaryColor());
+		chkAutoUpdate.setFont(DEFAULT_FONT);
+		chkAutoUpdate.setOpaque(true);
+		chkAutoUpdate.setForeground(usedTheme.getPrimaryFontColor());
 		pnlChk.add(chkOnTop);
 		pnlChk.add(chkFlash);
 		pnlChk.add(chkIsBorderless);
+		pnlChk.add(chkAutoUpdate);
 		
 		// Central Panels //
 		pnlCentre = new JPanel();
@@ -209,7 +217,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		this.add(pnlMain);
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setSize(200, 150);
+		//this.setSize(200, 160);
 		this.setIconImage(winIcon.getImage());
 		this.setUndecorated(true);
 		this.pack();
@@ -223,7 +231,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 			result = "Cancel";
 			this.dispose();
 		}else if (e.getSource() == lblSave) {   // Save
-			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1, themeNames[cmbThemes.getSelectedIndex()]);
+			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), chkAutoUpdate.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1, themeNames[cmbThemes.getSelectedIndex()]);
 			newSettings.Save();
 			result = "Save";
 			this.dispose();

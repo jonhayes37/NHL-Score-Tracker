@@ -16,6 +16,7 @@ public class ScraperSettings implements Serializable{
 	private boolean alwaysOnTop;
 	private boolean flash;
 	private boolean isBorderless;
+	private boolean autoUpdate;
 	private int refreshFrequency;
 	private int minGamesShown;
 	private Theme theme;
@@ -24,15 +25,17 @@ public class ScraperSettings implements Serializable{
 		this.alwaysOnTop = false;
 		this.flash = true;
 		this.isBorderless = true;
+		this.autoUpdate = true;
 		this.refreshFrequency = 60;
 		this.minGamesShown = 3;
 		this.theme = new Theme();
 	}
 	
-	public ScraperSettings(boolean onTop, boolean canFlash, boolean deco, int frequency, int minShown, String th){
+	public ScraperSettings(boolean onTop, boolean canFlash, boolean deco, boolean autoU, int frequency, int minShown, String th){
 		this.alwaysOnTop = onTop;
 		this.flash = canFlash;
 		this.isBorderless = deco;
+		this.autoUpdate = autoU;
 		this.refreshFrequency = frequency;
 		this.minGamesShown = minShown;
 		this.theme = new Theme(th);
@@ -61,6 +64,7 @@ public class ScraperSettings implements Serializable{
 	         this.alwaysOnTop = newSettings.alwaysOnTop;
 	         this.flash = newSettings.flash;
 	         this.isBorderless = newSettings.isBorderless;
+	         this.autoUpdate = newSettings.autoUpdate;
 	         this.refreshFrequency = newSettings.refreshFrequency;
 	         this.minGamesShown = newSettings.minGamesShown;
 	         this.theme = newSettings.theme;
@@ -70,13 +74,14 @@ public class ScraperSettings implements Serializable{
 	
 	// Returns true if both settings are equal
 	public boolean isEqual(ScraperSettings s2) {
-		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown && this.theme.getName().equals(s2.theme.getName());
+		return this.alwaysOnTop == s2.alwaysOnTop && this.flash == s2.flash && this.isBorderless == s2.isBorderless && this.autoUpdate == s2.autoUpdate && this.refreshFrequency == s2.refreshFrequency && this.minGamesShown == s2.minGamesShown && this.theme.getName().equals(s2.theme.getName());
 	}
 	
 	// Getters
 	public boolean getOnTop(){ return alwaysOnTop; }
 	public boolean getFlash(){ return flash; }
 	public boolean getIsBorderless(){ return isBorderless; }
+	public boolean getAutoUpdate(){ return this.autoUpdate; }
 	public int getRefreshFrequency(){ return refreshFrequency; }
 	public int getMinGamesShown(){ return minGamesShown; }
 	public Theme getTheme(){ return this.theme; }

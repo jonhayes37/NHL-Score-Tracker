@@ -38,7 +38,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-
 public class MainWindow extends JFrame implements MouseListener{
 	
 	// UI Elements
@@ -64,12 +63,13 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private static final String VERSION_NUMBER = "1.3";
+	private final String VERSION_NUMBER = "1.4.1";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private List<Image> icons = new ArrayList<Image>();
 	private int uiOffset = (osName.contains("Mac")) ? 15 : 0;
+	private int consecFailScrapes = 0;
 
 	public MainWindow(){
 		
@@ -109,7 +109,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlTop.add(lblClose, BorderLayout.EAST);
 		pnlListGames = new JPanel();
 		
-		// Initial Scraping / Updating main panel
+		// Initial Scraping / Updating main panel / Updating
 		boolean[] changed = Scrape(true);
 		UpdateUI(true, changed);
 		ScheduleRefresh();
@@ -127,6 +127,11 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.pack();
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2 + uiOffset);
 		this.setVisible(true);
+		
+		if (settings.getAutoUpdate()){
+			Updater update = new Updater("NHL Score Tracker", this.VERSION_NUMBER);
+			update.CheckVersion();
+		}
 	}
 	
 	// Listener responses for settings and close
@@ -187,13 +192,13 @@ public class MainWindow extends JFrame implements MouseListener{
 			
 		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
 			e.printStackTrace();
-			JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\"><b>Error:</b>  Unable to retrieve score data. Please ensure you have a stable internet<br>connection and the latest version of NHL Score Tracker (this is version " + VERSION_NUMBER + ").</html>");
-		    JDialog errorDialog = errorPane.createDialog((JFrame)null, "Retrieval Error");
-		    errorDialog.setLocationRelativeTo(null);
-		    errorDialog.setVisible(true);
-			scheduledFuture.cancel(false);
-			this.dispose();
-			System.exit(0);
+			if (consecFailScrapes * settings.getRefreshFrequency() > 180){
+				JOptionPane errorPane = new JOptionPane("<html><div style=\"text-align: center;\">We're having issues retrieving score data. Please ensure you have a stable internet<br>connection and the latest version of NHL Score Tracker (this is version " + VERSION_NUMBER + ").</html>");
+			    JDialog errorDialog = errorPane.createDialog((JFrame)null, "Retrieval Error");
+			    errorDialog.setLocationRelativeTo(this);
+			    errorDialog.setVisible(true);
+				scheduledFuture.cancel(false);
+			}
 		}
 		return scoreChanged;
 	}

@@ -73,6 +73,7 @@ public class ThemeMakerWindow extends JDialog implements ActionListener{
 		btnColorFormat = new ButtonGroup();
 		btnColorFormat.add(btnRadios[0]);
 		btnColorFormat.add(btnRadios[1]);
+		btnRadios[0].setSelected(true);
 		pnlColorFormat.add(btnRadios[0]);
 		pnlColorFormat.add(btnRadios[1]);
 		
