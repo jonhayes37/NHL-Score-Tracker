@@ -54,10 +54,15 @@ public class Updater {
 			br.close();
 		} catch (IOException e) { e.printStackTrace(); }
 		System.out.println("Remote Version: " + remoteVersion);
-		if (!remoteVersion.equals(localVersion)){
+		if (!remoteVersion.equals(localVersion)){	// Update Available
 			int choice = JOptionPane.showConfirmDialog(null, "<html>An update to " + projectName + " is available.<br><br>Your version: " + localVersion + "<br>Latest version: " + remoteVersion + "<br><br>Would you like to download the latest version?", projectName + " Updater", JOptionPane.YES_NO_OPTION);
 			if (choice == JOptionPane.YES_OPTION){
 				DownloadLatestVersion();
+			}
+		}else{	// No updates
+			File f = new File(path + "/latest_versions.txt");
+			if (f.exists()){
+				f.delete();
 			}
 		}
 	}

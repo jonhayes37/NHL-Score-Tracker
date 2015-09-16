@@ -63,7 +63,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private final String VERSION_NUMBER = "1.4.1";
+	private final String VERSION_NUMBER = "1.4.2";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
