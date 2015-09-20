@@ -38,28 +38,30 @@ public class Updater {
 	public void CheckVersion(){
 		FTPDownload(true);
 		try {
-			System.out.println("Path: " + path + "/latest_versions.txt");
 			BufferedReader br = new BufferedReader(new FileReader(path + "/latest_versions.txt"));
 			String line = br.readLine();
-			System.out.println("Line: " + line);
 			while (line != null){
-				System.out.println("Line: " + line);
-				System.out.println("Project Name: " + this.projectName);
 				if (line.split("<->")[0].equals(this.projectName)){
-					System.out.println("Equal!");
 					this.remoteVersion = line.split("<->")[1];
 					break;
+				}else{
+					line = br.readLine();
 				}
 			}
 			br.close();
 		} catch (IOException e) { e.printStackTrace(); }
-		System.out.println("Remote Version: " + remoteVersion);
 		if (!remoteVersion.equals(localVersion)){	// Update Available
 			int choice = JOptionPane.showConfirmDialog(null, "<html>An update to " + projectName + " is available.<br><br>Your version: " + localVersion + "<br>Latest version: " + remoteVersion + "<br><br>Would you like to download the latest version?", projectName + " Updater", JOptionPane.YES_NO_OPTION);
 			if (choice == JOptionPane.YES_OPTION){
 				DownloadLatestVersion();
+			}else{	// Deletes the latest_versions file
+				File f = new File(path + "/latest_versions.txt");
+				if (f.exists()){
+					f.delete();
+				}
 			}
 		}else{	// No updates
+			//JOptionPane.showMessageDialog(null, "You are up to date!", projectName + " Updater", JOptionPane.INFORMATION_MESSAGE);
 			File f = new File(path + "/latest_versions.txt");
 			if (f.exists()){
 				f.delete();
@@ -76,8 +78,9 @@ public class Updater {
 		JOptionPane.showMessageDialog(null, "The latest version has been downloaded. Please close the program, delete this version's .jar file, and run the new version's .jar file.", projectName + " Updater", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
+	// Downloads either the latest_versions file, or the latest
+	// version of the running program
 	private void FTPDownload(boolean checking){
-		System.out.println("Starting FTP...");
         FTPClient ftpClient = new FTPClient();
         try {
  
@@ -89,25 +92,18 @@ public class Updater {
             String remoteFile;
             File downloadFile;
             if (checking){
-            	System.out.println("Getting versions file...");
             	remoteFile = "/public_html/Download_Files/latest_versions.txt";
             	downloadFile = new File(path + "/latest_versions.txt");
             }else{
-            	System.out.println("Getting zip file...");
             	remoteFile = "/public_html/Download_Files/" + projectName + " " + remoteVersion + ".zip";
             	downloadFile = new File(path + "/" + projectName + " " + remoteVersion + ".zip");
             }
             
             OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(downloadFile));
-            boolean success = ftpClient.retrieveFile(remoteFile, outputStream);
+            ftpClient.retrieveFile(remoteFile, outputStream);
             outputStream.close();
- 
-            if (success) {
-                System.out.println("File has been downloaded successfully.");
-            }
 
         } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
             ex.printStackTrace();
         } finally {
             try {
@@ -121,6 +117,7 @@ public class Updater {
         }
 	}
 	
+	// Unzips a zip folder
 	private void Unzip(){
 		
 		try{	    			        
@@ -138,7 +135,6 @@ public class Updater {
             
             while (entry != null) {		// Iterates over entries in the zip file
                 String filePath = path + File.separator + entry.getName();
-                System.out.println("Extracting: " + path + "##" + File.separator + entry.getName());
                 if (!entry.isDirectory()) { 	// If the entry is a file, extracts it
                     ExtractFile(zipIn, filePath);
                 } else {	// If the entry is a directory, make the directory
@@ -148,13 +144,11 @@ public class Updater {
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
-            zipIn.close();
-	    		
-	    	System.out.println("Done");
-	    		
+            zipIn.close();  		
 	    }catch(IOException ex){ ex.printStackTrace(); }
 	}
 
+	// Extracts a file from a zip folder
 	private void ExtractFile(ZipInputStream zipIn, String filePath) throws IOException {
 	    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(filePath));
 	    byte[] bytesIn = new byte[4096];
@@ -165,9 +159,11 @@ public class Updater {
 	    bos.close();
 	}
 	
+	// Cleans up downloaded files and moves new files to the appropriate place
 	private void Cleanup(){
 		ArrayList<String> directories = new ArrayList<String>();
 		
+		// Deleting the downloaded .zip and latest_versions file which was used to check the version
 		File f = new File(path + "/" + projectName + " " + remoteVersion + ".zip");
 		if (f.exists()){
 			f.delete();
@@ -177,6 +173,7 @@ public class Updater {
 			f.delete();
 		}
 		
+		// Moving files to the working directory
 		File oldFolder = new File(path + "/" + projectName + " " + remoteVersion);
 		File[] contents = oldFolder.listFiles();
 		for (File file : contents){
@@ -197,18 +194,18 @@ public class Updater {
 		for (int i = 0; i < directories.size(); i++){
 			File toDelete = new File(path + "/" + directories.get(i) + "/" + directories.get(i));
 			if (toDelete.exists()){
-				System.out.println("Deleted");
 				toDelete.delete();
 			}
 		}
 		DeleteDirectory(oldFolder);
 	}
 	
+	// Deletes all contents of a directory
 	public static boolean DeleteDirectory(File directory) {
 	    if(directory.exists()){
 	        File[] files = directory.listFiles();
-	        if(null!=files){
-	            for(int i=0; i<files.length; i++) {
+	        if(files != null){
+	            for(int i = 0; i < files.length; i++) {
 	                if(files[i].isDirectory()) {
 	                    DeleteDirectory(files[i]);
 	                }

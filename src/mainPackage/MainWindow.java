@@ -63,7 +63,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private final String VERSION_NUMBER = "1.4.2";
+	private final String VERSION_NUMBER = "1.4.3";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -330,7 +330,9 @@ public class MainWindow extends JFrame implements MouseListener{
 		int[] priorities = new int[games.length];
 		
 		for (int i = 0; i < games.length; i++) {  // Giving each game a priority
+			System.out.println("Game " + i + ": " + games[i].lblPeriod.getText());
 			String[] tempTime = games[i].lblPeriod.getText().split(" ");
+			//System.out.println("Game " + i + ": " + tempTime.length + " words");
 			if (tempTime.length > 1 && !tempTime[0].contains("FINAL") && !tempTime[1].contains("FINAL")) {
 				if (tempTime[1].equals("1ST")) {    // Game is in the 1st period
 					priorities[i] = 3;
@@ -338,7 +340,7 @@ public class MainWindow extends JFrame implements MouseListener{
 					priorities[i] = 4;
 				}else if (tempTime[1].equals("3RD")) {    // Game is in the 3rd period
 					priorities[i] = 5;
-				}else if (tempTime[i].equals("PM")) {    // Game hasn't started yet 
+				}else if (tempTime[1].equals("PM")) {    // Game hasn't started yet 
 					priorities[i] = 2;
 				}else {    // It's in OT (not 'FINAL (OT)')
 					priorities[i] = 6;

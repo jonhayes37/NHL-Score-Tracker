@@ -217,7 +217,6 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		this.add(pnlMain);
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		//this.setSize(200, 160);
 		this.setIconImage(winIcon.getImage());
 		this.setUndecorated(true);
 		this.pack();
