@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -43,6 +44,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private JLabel lblRefresh;
 	private JLabel lblMinShown;
 	private JLabel lblTheme;
+	private JLabel lblManageFavs;
 	private JComboBox<String> cmbTimes;
 	private JComboBox<String> cmbMinShown;
 	private JComboBox<String> cmbThemes;
@@ -55,10 +57,12 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private static final int[] times = {5, 15, 30, 60, 300, 900, 1800, 3600};
 	private static final ImageIcon winIcon = new ImageIcon("Resources/icon.png");
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
+	private ArrayList<String> favTeams = new ArrayList<String>();
 	public String result;
 	final String DIRECTORY = System.getProperty("user.dir") + "\\Themes\\";
 	final File fileInstance = new File(DIRECTORY);
 	final String[] themes = fileInstance.list();
+	
 	
 	public SettingsWindow(Point location){
 		
@@ -66,6 +70,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		ScraperSettings settings = new ScraperSettings();
 		settings.Load();
 		this.usedTheme = settings.getTheme();
+		this.favTeams = settings.getFavTeams();
 		themeNames = new String[themes.length + 1];
 		for (int i = 0; i < themes.length; i++) {
 			themeNames[i] = themes[i].substring(0, themes[i].length() - 4);
@@ -119,7 +124,7 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		pnlCentre.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 		
 		pnlRefresh = new JPanel();
-		pnlRefresh.setLayout(new GridLayout(3,1,0,10));
+		pnlRefresh.setLayout(new GridLayout(4,1,0,10));
 		pnlRefresh.setBackground(usedTheme.getSecondaryColor());
 		pnlRefresh.setBorder(BorderFactory.createEmptyBorder(0,0,15,0));
 		
@@ -183,15 +188,22 @@ public class SettingsWindow extends JDialog implements MouseListener{
 		});
 		pnlCmb[2].add(lblTheme);
 		pnlCmb[2].add(cmbThemes, BorderLayout.EAST);
+		lblManageFavs = new JLabel("Manage Favourite Teams", JLabel.CENTER);
+		lblManageFavs.setOpaque(true);
+		lblManageFavs.setBackground(usedTheme.getQuarternaryColor());
+		lblManageFavs.setForeground(Color.WHITE);
+		lblManageFavs.setFont(new Font("Arial", Font.BOLD, 16));
+		lblManageFavs.addMouseListener(this);
+		lblManageFavs.setPreferredSize(new Dimension(110,25));
 		pnlRefresh.add(pnlCmb[0]);
 		pnlRefresh.add(pnlCmb[1]);
 		pnlRefresh.add(pnlCmb[2]);
+		pnlRefresh.add(lblManageFavs);
 		
 		// Button Panel //
 		pnlButton = new JPanel();
 		pnlButton.setLayout(new GridLayout(1,2,5,0));
 		pnlButton.setBackground(usedTheme.getSecondaryColor());
-		pnlButton.setBorder(BorderFactory.createEmptyBorder(0,0,5,0));
 		lblCancel = new JLabel("Cancel", JLabel.CENTER);
 		lblCancel.setOpaque(true);
 		lblCancel.setBackground(usedTheme.getTertiaryColor());
@@ -230,10 +242,15 @@ public class SettingsWindow extends JDialog implements MouseListener{
 			result = "Cancel";
 			this.dispose();
 		}else if (e.getSource() == lblSave) {   // Save
-			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), chkAutoUpdate.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1, themeNames[cmbThemes.getSelectedIndex()]);
+			ScraperSettings newSettings = new ScraperSettings(chkOnTop.isSelected(), chkFlash.isSelected(), chkIsBorderless.isSelected(), chkAutoUpdate.isSelected(), times[cmbTimes.getSelectedIndex()], cmbMinShown.getSelectedIndex() + 1, this.favTeams, themeNames[cmbThemes.getSelectedIndex()]);
 			newSettings.Save();
 			result = "Save";
 			this.dispose();
+		}else if (e.getSource() == lblManageFavs){	// Manage Favourite Teams
+			ManageTeamsWindow mtw = new ManageTeamsWindow(this.favTeams, this.usedTheme, this.getLocation());
+			if (mtw.success){
+				this.favTeams = mtw.newTeams;
+			}
 		}
 	}
 	

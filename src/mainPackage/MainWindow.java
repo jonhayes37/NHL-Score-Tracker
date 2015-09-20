@@ -37,7 +37,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-
+// TODO Add ability to have favourite teams -> games with favourite teams get priority on top if in play (not PM)
+// TODO Add loading dialog
 public class MainWindow extends JFrame implements MouseListener{
 	
 	// UI Elements
@@ -63,7 +64,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
-	private final String VERSION_NUMBER = "1.4.3";
+	private final String VERSION_NUMBER = "1.4.4";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -76,6 +77,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e1){e1.printStackTrace();}
+		LoadingWindow ldw = new LoadingWindow(this);
 		settings.Load();
 		icons.add(new ImageIcon("Resources/icon-16x16.png").getImage()); 
 		icons.add(new ImageIcon("Resources/icon.png").getImage());
@@ -114,6 +116,8 @@ public class MainWindow extends JFrame implements MouseListener{
 		UpdateUI(true, changed);
 		ScheduleRefresh();
 		
+		ldw.EndLoop();
+		
 		// Starting up the Window
 		pnlMain.add(pnlTop, BorderLayout.NORTH);
 		pnlMain.add(pnlScroll);
@@ -123,6 +127,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(325, 350);
 		this.setIconImages(icons);
+		this.dispose();
 		this.setUndecorated(settings.getIsBorderless());
 		this.pack();
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2 + uiOffset);
@@ -323,16 +328,14 @@ public class MainWindow extends JFrame implements MouseListener{
 		return strDate;
 	}
 	
-	// Sorts games by priority: OT > 3RD > 2ND > 1ST > Not started > FINAL,
+	// Sorts games by priority: 2 Fav Teams > 1 Fav Team > OT > 3RD > 2ND > 1ST > Not started > FINAL,
 	// then each priority is sorted by time remaining in the period (except for teh final two
 	private GamePanel[] SortGames(GamePanel[] games) {
 		GamePanel[] sortedGames = new GamePanel[games.length];
 		int[] priorities = new int[games.length];
 		
 		for (int i = 0; i < games.length; i++) {  // Giving each game a priority
-			System.out.println("Game " + i + ": " + games[i].lblPeriod.getText());
 			String[] tempTime = games[i].lblPeriod.getText().split(" ");
-			//System.out.println("Game " + i + ": " + tempTime.length + " words");
 			if (tempTime.length > 1 && !tempTime[0].contains("FINAL") && !tempTime[1].contains("FINAL")) {
 				if (tempTime[1].equals("1ST")) {    // Game is in the 1st period
 					priorities[i] = 3;
@@ -344,6 +347,13 @@ public class MainWindow extends JFrame implements MouseListener{
 					priorities[i] = 2;
 				}else {    // It's in OT (not 'FINAL (OT)')
 					priorities[i] = 6;
+				}
+				String team1 = games[i].lblTeamNames[0].getText();
+				String team2 = games[i].lblTeamNames[1].getText();
+				if (!tempTime[1].equals("PM") && this.settings.getFavTeams().contains(team1) && this.settings.getFavTeams().contains(team2)){	// If an active game contains two favourite teams
+					priorities[i] += 14;
+				}else if (!tempTime[1].equals("PM") && (this.settings.getFavTeams().contains(team1) || this.settings.getFavTeams().contains(team2))){	// If an active game contains one favourite team
+					priorities[i] += 7;
 				}
 			}else{   // Period is 'FINAL'
 				priorities[i] = 1;
