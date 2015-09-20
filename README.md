@@ -5,7 +5,7 @@
 - Improvements to the sorting algorithm for game panels
 - Bug fixes
 
-![](http://jonathanhayes.ca/Images/nhl_score_tracker.png)
+![](http://www.jonathanhayes.ca/Images/nhl_score_tracker.png)
 
 ### What is NHL Score Tracker?
 
