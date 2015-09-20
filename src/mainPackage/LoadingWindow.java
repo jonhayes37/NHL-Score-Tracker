@@ -50,8 +50,7 @@ public class LoadingWindow {
 		new Thread(new Runnable(){
 			public void run(){
 				int curAngle = 0;
-				int count = 0;
-				while (looping && count < 50){
+				while (looping){
 					// Getting new photo
 					BufferedImage img = null;
 					try{
@@ -62,14 +61,13 @@ public class LoadingWindow {
 					
 					// Waiting and updating angle
 					try {
-						Thread.sleep(70);
+						Thread.sleep(40);
 					} catch (InterruptedException e) { e.printStackTrace(); }
-					if (curAngle == 330){
+					if (curAngle == 345){
 						curAngle = 0;
 					}else{
-						curAngle += 30;
+						curAngle += 15;
 					}
-					count++;
 				}
 			}
 		}).start();
