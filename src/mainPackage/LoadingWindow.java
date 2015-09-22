@@ -61,7 +61,7 @@ public class LoadingWindow {
 					
 					// Waiting and updating angle
 					try {
-						Thread.sleep(40);
+						Thread.sleep(33);
 					} catch (InterruptedException e) { e.printStackTrace(); }
 					if (curAngle == 345){
 						curAngle = 0;

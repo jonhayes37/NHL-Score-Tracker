@@ -124,7 +124,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setTitle("NHL Score Tracker " + VERSION_NUMBER);
 		this.setAlwaysOnTop(settings.getOnTop());  // Sets the window to always be on top is checked
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(325, 350);
+		this.setSize(350, 350);
 		this.setIconImages(icons);
 		this.dispose();
 		this.setUndecorated(settings.getIsBorderless());
@@ -245,9 +245,9 @@ public class MainWindow extends JFrame implements MouseListener{
 			
 			// Resizes the window if there are less games than the minimum required to show
 			if (numGames < settings.getMinGamesShown()){
-				pnlScroll.setPreferredSize(new Dimension(300, numGames * 98));
+				pnlScroll.setPreferredSize(new Dimension(325, numGames * 98));
 			}else{
-				pnlScroll.setPreferredSize(new Dimension(300, settings.getMinGamesShown() * 98));
+				pnlScroll.setPreferredSize(new Dimension(325, settings.getMinGamesShown() * 98));
 			}
 		}else{   // No games on today
 			/*
