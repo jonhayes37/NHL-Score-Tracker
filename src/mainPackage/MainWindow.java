@@ -165,33 +165,38 @@ public class MainWindow extends JFrame implements MouseListener{
 			Document doc = Jsoup.connect(website).get();			
 			
 			// Navigates to proper container for each piece of data
-			Elements teamCities = doc.getElementsByClass("scores-team-city");
-			Elements teamName = doc.getElementsByClass("scores-team-name");
-			Elements teamGoals = doc.getElementsByClass("team-score-container");
-			Elements gameTimes = doc.select("td");	
+			Elements scorecards = doc.select(".scorecard");
 			
 			// Add info to local arrays
 			int[][] oldGoals = this.teamGoals;
-			this.numGames = (short)(teamCities.size() / 2);
-			this.teamNames = new String[numGames][2];
-			this.teamGoals = new int[numGames][2];
-			this.gameTime = new String[numGames];
-			scoreChanged = new boolean[numGames];
-			
-			// Adding formatted team names and goals and the game time to internal data arrays
-			for (int i = 0; i < numGames; i++){
-				this.teamNames[i][0] = teamCities.get(2 * i).text() + " " + teamName.get(2 * i).text();
-				this.teamNames[i][1] = teamCities.get(2 * i + 1).text() + " " + teamName.get(2 * i + 1).text();
-				this.teamGoals[i][0] = (teamGoals.get(2 * i).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i).text());
-				this.teamGoals[i][1] = (teamGoals.get(2 * i + 1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(2 * i + 1).text());
-				this.gameTime[i] = FormatGameTime(gameTimes.get(i).text().toUpperCase());
+			this.numGames = (short)(scorecards.size());
+			this.teamNames = new String[this.numGames][2];
+			this.teamGoals = new int[this.numGames][2];
+			this.gameTime = new String[this.numGames];
+			scoreChanged = new boolean[this.numGames];
+
+			short counter = 0;
+			for (Element card: scorecards){
+				Elements teamCities = card.select(".team_scores > .team_score > .team > .team_name > .city");
+				Elements teamNames = card.select(".team_scores > .team_score > .team > .team_name > .name");
+				Elements teamGoals = card.select(".team_scores > .team_score > .score > .value");
+				Elements gameTimes = card.select(".game_status > p");
 				
+				// Adding formatted team names and goals and the game time to internal data arrays
+				this.teamNames[i][0] = teamCities.get(0).text() + " " + teamNames.get(0).text();
+				this.teamNames[i][1] = teamCities.get(1).text() + " " + teamNames.get(1).text();
+				this.teamGoals[i][0] = (teamGoals.get(0).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(0).text());
+				this.teamGoals[i][1] = (teamGoals.get(1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(1).text());
+				this.gameTime[i] = FormatGameTime(gameTimes.get(0).text().toUpperCase());
+
 				// Tracks if a goal was scored
 				if (!startup && (this.teamGoals[i][0] != oldGoals[i][0] || this.teamGoals[i][1] != oldGoals[i][1])) {
 					scoreChanged[i] = true;
 				}else{
 					scoreChanged[i] = false;
 				}
+
+				counter++;
 			}
 			
 		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
