@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -59,8 +61,8 @@ public class SettingsWindow extends JDialog implements MouseListener{
 	private static final Font DEFAULT_FONT = new Font("Arial", Font.PLAIN, 12);
 	private ArrayList<String> favTeams = new ArrayList<String>();
 	public String result;
-	final String DIRECTORY = System.getProperty("user.dir") + "\\Themes\\";
-	final File fileInstance = new File(DIRECTORY);
+	final Path DIRECTORY = Paths.get(System.getProperty("user.dir"), "Themes");
+	final File fileInstance = new File(DIRECTORY.normalize().toString());
 	final String[] themes = fileInstance.list();
 	
 	

@@ -22,16 +22,16 @@ public class Updater {
 	private String projectName;
 	private String localVersion;
 	private String remoteVersion;
-	private static final String FTP_SERVER = "www.jonathanhayes.ca";
+	private static final String FTP_SERVER = "baron-zemo.dreamhost.com";
 	private static final int FTP_PORT = 21;
-	private static final String FTP_USERNAME = "jonhayes37";
-	private static final String FTP_PASSWORD = "Canon7DFTW";
+	private static final String FTP_USERNAME = "jonhay14";
+	private static final String FTP_PASSWORD = "GirlsGeneration9";
 	private final String path = System.getProperty("user.dir");
 	
 	public Updater(String name, String ver){
 		this.projectName = name;
 		this.localVersion = ver;
-		this.remoteVersion = "init";
+		this.remoteVersion = "unknown";
 	}
 	
 	// Returns true if the local version is up to date
@@ -92,7 +92,7 @@ public class Updater {
             String remoteFile;
             File downloadFile;
             if (checking){
-            	remoteFile = "/public_html/Download_Files/latest_versions.txt";
+            	remoteFile = "/jonathanhayes.online/res/download/latest_versions.txt";
             	downloadFile = new File(path + "/latest_versions.txt");
             }else{
             	remoteFile = "/public_html/Download_Files/" + projectName + " " + remoteVersion + ".zip";

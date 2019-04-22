@@ -91,33 +91,36 @@ public class GamePanel extends JPanel{
 	}
 	
 	// Updates a panel with scraped information
-	protected void UpdatePanel(String[] names, int[] goals, String time){
-		
-		if (time.equals("END 3RD") && goals[0] != goals[1]) {  // Sets the game to final if a team won but the site says 'END 3RD'
-			time = "FINAL";
+	protected void UpdatePanel(Game g){
+		if (g.getGameTime().equals("END 3RD") && !g.isTied()) {  // Sets the game to final if a team won but the site says 'END 3RD'
+			g.setGameTime("FINAL");
 		}
 		
 		// Updating the two team panels
-		for (int i = 0; i < 2; i++){
-			this.lblTeamIcons[i].setIcon(new ImageIcon("Resources/" + names[i] + ".png"));
-			this.lblTeamNames[i].setText(names[i]);
-			this.lblTeamGoals[i].setText(goals[i] + "");
-			this.lblPeriod.setText(time);	
-			
-			// Bolds the winning team and their score, and if the game is over
-			if (((goals[0] > goals[1] && i == 0) || (goals[1] > goals[0] && i == 1)) && time.contains("FINAL")){
-				this.lblTeamNames[i].setFont(new Font(this.lblTeamNames[i].getFont().getFontName(), Font.BOLD, this.lblTeamNames[i].getFont().getSize()));
-				this.lblTeamGoals[i].setFont(new Font(this.lblTeamGoals[i].getFont().getFontName(), Font.BOLD, this.lblTeamGoals[i].getFont().getSize()));
-			}
+		this.lblTeamIcons[0].setIcon(new ImageIcon("Resources/" + g.getHomeTeam() + ".png"));
+		this.lblTeamIcons[1].setIcon(new ImageIcon("Resources/" + g.getAwayTeam() + ".png"));
+		this.lblTeamNames[0].setText(g.getHomeTeam());
+		this.lblTeamNames[1].setText(g.getAwayTeam());
+		this.lblTeamGoals[0].setText(String.valueOf(g.getHomeGoals()));
+		this.lblTeamGoals[1].setText(String.valueOf(g.getAwayGoals()));
+		this.lblPeriod.setText(g.getGameTime());	
+		
+		// Bolds the winning team and their score, and if the game is over
+		if (g.getHomeGoals() > g.getAwayGoals() && g.getGameTime().contains("FINAL")){
+			this.lblTeamNames[0].setFont(new Font(this.lblTeamNames[0].getFont().getFontName(), Font.BOLD, this.lblTeamNames[0].getFont().getSize()));
+			this.lblTeamGoals[0].setFont(new Font(this.lblTeamGoals[0].getFont().getFontName(), Font.BOLD, this.lblTeamGoals[0].getFont().getSize()));
+		}else if (g.getAwayGoals() > g.getHomeGoals() && g.getGameTime().contains("FINAL")) {
+			this.lblTeamNames[1].setFont(new Font(this.lblTeamNames[1].getFont().getFontName(), Font.BOLD, this.lblTeamNames[1].getFont().getSize()));
+			this.lblTeamGoals[1].setFont(new Font(this.lblTeamGoals[1].getFont().getFontName(), Font.BOLD, this.lblTeamGoals[1].getFont().getSize()));
 		}
 
-		if (time.contains("FINAL")){    // If the game is over, grays and bolds 'FINAL'
+		if (g.getGameTime().contains("FINAL")){    // If the game is over, grays and bolds 'FINAL'
 			lblPeriod.setForeground(usedTheme.getSecondaryFontColor());
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
-		}else if (time.contains("3RD") && time.length() < 9 && time.charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
+		}else if (g.getGameTime().contains("3RD") && g.getGameTime().length() < 9 && g.getGameTime().charAt(0) < '5'){    // If the game is in the last 5 minutes of play, bolds and colors the game time red
 			lblPeriod.setForeground(new Color(249,13,25));
 			this.lblPeriod.setFont(new Font(this.lblPeriod.getFont().getFontName(), Font.BOLD, this.lblPeriod.getFont().getSize()));
-		}else if (time.contains("PM")) {   // Hides the goals if the game has not started yet
+		}else if (g.getGameTime().contains("PM")) {   // Hides the goals if the game has not started yet
 			lblTeamGoals[0].setText("");
 			lblTeamGoals[1].setText("");
 		}

@@ -36,6 +36,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class MainWindow extends JFrame implements MouseListener{
@@ -52,10 +53,7 @@ public class MainWindow extends JFrame implements MouseListener{
 	private JLabel lblClose;
 
 	// Data from scraping
-	private short numGames;
-	private String[][] teamNames;
-	private int[][] teamGoals;
-	private String[] gameTime;
+	ArrayList<Game> games;
 	
 	// Miscellaneous data
 	private static final String osName = System.getProperty("os.name");
@@ -63,9 +61,10 @@ public class MainWindow extends JFrame implements MouseListener{
 	private ScraperSettings settings = new ScraperSettings();
 	private ScheduledExecutorService refresh;
 	ScheduledFuture<?> scheduledFuture = null;
+	private final String PROJECT_NAME = "NHL Score Tracker";
 	private final String VERSION_NUMBER = "1.4.5";
 	private static final String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
-	private static final String website = "http://www.sportsnet.ca/hockey/nhl/scores/";
+	private static final String WEBSITE_URL = "https://www.msn.com/en-ca/sports/nhl/scores";
 	private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	private List<Image> icons = new ArrayList<Image>();
 	private int uiOffset = (osName.contains("Mac")) ? 15 : 0;
@@ -111,6 +110,7 @@ public class MainWindow extends JFrame implements MouseListener{
 		pnlListGames = new JPanel();
 		
 		// Initial Scraping / Updating main panel / Updating
+		this.games = new ArrayList<Game>();
 		boolean[] changed = Scrape(true);
 		UpdateUI(true, changed);
 		ScheduleRefresh();
@@ -132,10 +132,10 @@ public class MainWindow extends JFrame implements MouseListener{
 		this.setLocation(screenSize.width - this.getWidth() - 2, 2 + uiOffset);
 		this.setVisible(true);
 		
-		if (settings.getAutoUpdate()){
-			Updater update = new Updater("NHL Score Tracker", this.VERSION_NUMBER);
-			update.CheckVersion();
-		}
+//		if (settings.getAutoUpdate()){
+//			Updater update = new Updater(this.PROJECT_NAME, this.VERSION_NUMBER);
+//			update.CheckVersion();
+//		}
 	}
 	
 	// Listener responses for settings and close
@@ -158,45 +158,42 @@ public class MainWindow extends JFrame implements MouseListener{
 		}
 	}
 	
-	// Scrapes www.sportsnet.ca/hockey/nhl/scores/ for the day's games and their status
+	// Scrapes for the day's games and their status
 	private boolean[] Scrape(boolean startup){
 		boolean[] scoreChanged = null;
 		try {
-			Document doc = Jsoup.connect(website).get();			
+			Document doc = Jsoup.connect(WEBSITE_URL).get();			
 			
 			// Navigates to proper container for each piece of data
-			Elements scorecards = doc.select(".scorecard");
+			Element scoresTable = doc.selectFirst(".icehockeyscorestable");
+			Elements scorecards = scoresTable.select("tbody.rowlink");
 			
 			// Add info to local arrays
-			int[][] oldGoals = this.teamGoals;
-			this.numGames = (short)(scorecards.size());
-			this.teamNames = new String[this.numGames][2];
-			this.teamGoals = new int[this.numGames][2];
-			this.gameTime = new String[this.numGames];
-			scoreChanged = new boolean[this.numGames];
+			scoreChanged = new boolean[scorecards.size()];
 
-			short counter = 0;
 			for (Element card: scorecards){
-				Elements teamCities = card.select(".team_scores > .team_score > .team > .team_name > .city");
-				Elements teamNames = card.select(".team_scores > .team_score > .team > .team_name > .name");
-				Elements teamGoals = card.select(".team_scores > .team_score > .score > .value");
-				Elements gameTimes = card.select(".game_status > p");
+				String winningTeamName = card.selectFirst("tr").selectFirst("td.teamname").text();
+				String losingTeamName = card.select("tr").get(1).selectFirst("td.teamname").text();
+				short winningGoals = Short.parseShort(card.selectFirst("td.winningteam").text());
+				Elements awayTeamGoals = card.select("tr").get(1).select("td.teamscore");
+				short losingGoals = Short.parseShort(awayTeamGoals.get(awayTeamGoals.size() - 1).text());
+				String gameTime = this.FormatGameTime(card.selectFirst("td.matchstatus").text());
 				
 				// Adding formatted team names and goals and the game time to internal data arrays
-				this.teamNames[i][0] = teamCities.get(0).text() + " " + teamNames.get(0).text();
-				this.teamNames[i][1] = teamCities.get(1).text() + " " + teamNames.get(1).text();
-				this.teamGoals[i][0] = (teamGoals.get(0).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(0).text());
-				this.teamGoals[i][1] = (teamGoals.get(1).text().equals("")) ? 0 : Integer.parseInt(teamGoals.get(1).text());
-				this.gameTime[i] = FormatGameTime(gameTimes.get(0).text().toUpperCase());
-
-				// Tracks if a goal was scored
-				if (!startup && (this.teamGoals[i][0] != oldGoals[i][0] || this.teamGoals[i][1] != oldGoals[i][1])) {
-					scoreChanged[i] = true;
-				}else{
-					scoreChanged[i] = false;
+				Game curGame = new Game(winningTeamName, losingTeamName, winningGoals, losingGoals, gameTime);
+				if (!startup) {
+					for (short i = 0; i < this.games.size(); i++) {
+						Game g = this.games.get(i);
+						if (g.equals(curGame)) {
+							if (g.scoreChanged(curGame)) {
+								scoreChanged[i] = true;
+							}
+							this.games.set(i, curGame);
+						}
+					}
+				}else {
+					this.games.add(curGame);
 				}
-
-				counter++;
 			}
 			
 		} catch (IOException e) {   // Gives an error dialog if unable to connect to the website, then closes
@@ -224,6 +221,8 @@ public class MainWindow extends JFrame implements MouseListener{
 			if (this.date.compareTo(tempDate) > 0) {  // Time is currently after the game time text
 				return "20:00 1st";
 			}
+		}else if (time.contains("ET")) {
+			return time.replaceAll("ET", "OT");
 		}
 		return time;
 	}
@@ -231,13 +230,13 @@ public class MainWindow extends JFrame implements MouseListener{
 	// Updates UI elements with the latest scraped data
 	private void UpdateUI(boolean startup, boolean[] goalScored){
 		// Creates the new game panels from the given data
-		pnlGames = new GamePanel[numGames];
+		pnlGames = new GamePanel[this.games.size()];
 		pnlListGames.removeAll();
-		if (numGames > 0) {
-			pnlListGames.setLayout(new GridLayout(numGames, 1, 0, 0));
-			for (int i = 0; i < numGames; i++){
+		if (this.games.size() > 0) {
+			pnlListGames.setLayout(new GridLayout(this.games.size(), 1, 0, 0));
+			for (int i = 0; i < this.games.size(); i++){
 				pnlGames[i] = new GamePanel(settings.getTheme());
-				pnlGames[i].UpdatePanel(teamNames[i], teamGoals[i], gameTime[i]);
+				pnlGames[i].UpdatePanel(this.games.get(i));
 			}
 			
 			// Sorting games, and adding them to the UI
@@ -249,8 +248,8 @@ public class MainWindow extends JFrame implements MouseListener{
 			pnlScroll.getVerticalScrollBar().setUnitIncrement(98);
 			
 			// Resizes the window if there are less games than the minimum required to show
-			if (numGames < settings.getMinGamesShown()){
-				pnlScroll.setPreferredSize(new Dimension(325, numGames * 98));
+			if (this.games.size() < settings.getMinGamesShown()){
+				pnlScroll.setPreferredSize(new Dimension(325, this.games.size() * 98));
 			}else{
 				pnlScroll.setPreferredSize(new Dimension(325, settings.getMinGamesShown() * 98));
 			}
@@ -289,7 +288,7 @@ public class MainWindow extends JFrame implements MouseListener{
 			this.repaint();
 			
 			// Flashes games if a goal was scored
-			for (int i = 0; i < numGames; i++) {
+			for (int i = 0; i < this.games.size(); i++) {
 				if (goalScored[i]) {
 					this.toFront();
 					this.repaint();
